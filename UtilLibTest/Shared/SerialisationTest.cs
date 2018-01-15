@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UtiLib
+namespace UtilLibTest.Shared
 {
-    public class Class1
+    [Serializable]
+    internal class SerialisationDummy
     {
+        public string Message { get; set; }
     }
 }
