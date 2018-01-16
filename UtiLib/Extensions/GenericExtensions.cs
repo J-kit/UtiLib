@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UtiLib.Extensions
+// ReSharper disable once CheckNamespace
+namespace System
 {
     public static class GenericExtensions
     {

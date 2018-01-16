@@ -5,8 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using UtilLibTest.Shared;
 
-using UtiLib.Extensions;
-
 namespace UtilLibTest
 {
     [TestClass]

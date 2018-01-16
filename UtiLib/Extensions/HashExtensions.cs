@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using UtiLib.Cryptography;
 
-namespace UtiLib.Extensions
+namespace System
 {
     public static class HashExtensions
     {

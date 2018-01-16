@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using UtiLib.Shared.Interfaces;
 
-namespace UtiLib.Extensions
+// ReSharper disable once CheckNamespace
+namespace System
 {
     public static class AsyncEnumerableExtensions
     {

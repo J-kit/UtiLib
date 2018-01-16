@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading.Tasks;
-using UtiLib.Serialisation;
 
-namespace UtiLib.Extensions
+using UtiLib;
+
+// ReSharper disable once CheckNamespace
+namespace System
 {
     public static class SerialisationExtensions
     {
