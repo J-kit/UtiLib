@@ -15,5 +15,22 @@ namespace UtiLib.Extensions
 
             return input;
         }
+
+        public static void OnSuccess<T>(this Tuple<bool, T> tulpe, Action<T> doThat)
+        {
+            if (tulpe.Item1)
+            {
+                doThat(tulpe.Item2);
+            }
+        }
+
+        public static TX OnSuccess<T, TX>(this Tuple<bool, T> tulpe, Func<T, TX> doThat)
+        {
+            if (tulpe.Item1)
+            {
+                return doThat(tulpe.Item2);
+            }
+            return default(TX);
+        }
     }
 }
