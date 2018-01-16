@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public static class NetExtensions

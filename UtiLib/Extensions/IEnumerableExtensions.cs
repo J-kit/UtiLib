@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public static class EnumerableExtensions
@@ -18,14 +14,6 @@ namespace System
                 {
                     yield return e;
                 }
-            }
-        }
-
-        public static IEnumerable<TX> RForEach<T, TX>(this IEnumerable<T> source, Func<T, TX> func)
-        {
-            foreach (var e in source)
-            {
-                yield return func(e);
             }
         }
 

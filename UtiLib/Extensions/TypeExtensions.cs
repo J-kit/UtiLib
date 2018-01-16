@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public static class TypeExtensions
@@ -26,7 +26,7 @@ namespace System
                 {
                     methodArray = methodArray
                         .Where(a => a.GetParameters()
-                            .Where((ParameterInfo info, int i) => info.ParameterType == matchInputParams[i])
+                            .Where((info, i) => info.ParameterType == matchInputParams[i])
                             .Any());
                 }
             }

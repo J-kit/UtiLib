@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UtiLib.Shared.Interfaces;
 
 // ReSharper disable once CheckNamespace

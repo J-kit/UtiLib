@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using UtiLib.Cryptography;
 
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public static class HashExtensions

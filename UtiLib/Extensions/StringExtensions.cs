@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http.Headers;
+﻿using System.Linq;
 using System.Text;
 using System.Web;
 
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public enum StringEncoding
@@ -74,7 +73,7 @@ namespace System
         }
 
         public static string FormatEx(this string input, params object[] args)
-                => String.Format(input, args);
+                => string.Format(input, args);
 
         public static string[] Split(this string s, string separator)
                 => s.Split(new[] { separator }, StringSplitOptions.None);
@@ -82,6 +81,11 @@ namespace System
         public static string UrlEncode(this string input)
         {
             return HttpUtility.UrlEncode(input);
+        }
+
+        public static string UrlDecode(this string input)
+        {
+            return HttpUtility.UrlDecode(input);
         }
     }
 }
