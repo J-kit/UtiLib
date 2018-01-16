@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Web;
 
 namespace UtiLib.Extensions
 {
@@ -76,5 +78,10 @@ namespace UtiLib.Extensions
 
         public static string[] Split(this string s, string separator)
                 => s.Split(new[] { separator }, StringSplitOptions.None);
+
+        public static string UrlEncode(this string input)
+        {
+            return HttpUtility.UrlEncode(input);
+        }
     }
 }

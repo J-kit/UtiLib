@@ -11,7 +11,7 @@ namespace UtiLib.Extensions
 {
     public static class WebClientExtensions
     {
-        public static WebClient PrepareClient(this WebClient wc)
+        public static T PrepareClient<T>(this T wc) where T : WebClient
         {
             wc.Proxy = null;
             wc.Encoding = Settings.DefaultEncoding;

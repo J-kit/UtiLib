@@ -8,7 +8,7 @@ using UtiLib.Serialisation;
 
 namespace UtiLib
 {
-    internal class Settings
+    public class Settings
     {
         public static ISerializer DefaultSerializer { get; set; }
         public static ISerializer DefaultXmlSerializer { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,14 @@ namespace UtiLib.Extensions
                 {
                     yield return e;
                 }
+            }
+        }
+
+        public static IEnumerable<TX> RForEach<T, TX>(this IEnumerable<T> source, Func<T, TX> func)
+        {
+            foreach (var e in source)
+            {
+                yield return func(e);
             }
         }
 

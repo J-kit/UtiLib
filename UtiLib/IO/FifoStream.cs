@@ -9,12 +9,11 @@ namespace UtiLib.IO
     [DebuggerDisplay("Length = {Length}")]
     public class FifoStream : Stream, IDisposable
     {
-        private readonly Queue<BufferObject> _localBuffer = new Queue<BufferObject>();
-        private int _bufferSize = -1;
-        protected long _length;
         private readonly IRingbufferProvider _ringBufferProvider;
+        private readonly Queue<BufferObject> _localBuffer = new Queue<BufferObject>();
 
-        private BufferObject LastBuffer;
+        private long _length;
+        private BufferObject _lastBuffer;
 
         public FifoStream(IRingbufferProvider provider)
         {
@@ -37,7 +36,7 @@ namespace UtiLib.IO
 
         public new void Dispose()
         {
-            LastBuffer = null;
+            _lastBuffer = null;
             while (_localBuffer?.Count != 0)
                 _localBuffer?.Dequeue().ReIntegrate();
 
@@ -52,7 +51,7 @@ namespace UtiLib.IO
         /// <returns></returns>
         public FifoStream FastMove(int requiredBytes)
         {
-            LastBuffer = null;
+            _lastBuffer = null;
 
             var dStream = new FifoStream(_ringBufferProvider);
 
@@ -91,18 +90,20 @@ namespace UtiLib.IO
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            LastBuffer = null;
+            BufferObject cBuf = null;
 
             var tCount = count;
             var cOffset = offset;
             var rBytes = 0;
 
-            BufferObject cBuf = null;
+            _lastBuffer = null;
 
             do
             {
                 if (_localBuffer.Count == 0) break;
+
                 cBuf = _localBuffer.Peek();
+
                 var readBytes = cBuf.Read(buffer, cOffset, tCount);
                 if (readBytes > 0)
                 {
@@ -141,8 +142,8 @@ namespace UtiLib.IO
 
             var tCount = count;
             var tOffset = offset;
+            var cWriteBuf = _lastBuffer;
 
-            var cWriteBuf = LastBuffer;
             if (cWriteBuf == null)
                 _localBuffer.Enqueue(cWriteBuf = _ringBufferProvider.Create());
 
@@ -150,12 +151,14 @@ namespace UtiLib.IO
             {
                 if (cWriteBuf.IsFull)
                     _localBuffer.Enqueue(cWriteBuf = _ringBufferProvider.Create());
+
                 var cWrite = cWriteBuf.Write(buffer, tOffset, tCount);
+
                 tCount -= cWrite;
                 tOffset += cWrite;
             }
 
-            LastBuffer = cWriteBuf.IsFull ? null : cWriteBuf;
+            _lastBuffer = cWriteBuf.IsFull ? null : cWriteBuf;
 
             _length += count;
         }
@@ -171,11 +174,13 @@ namespace UtiLib.IO
         /// <param name="stream"></param>
         public void MoveTo(FifoStream stream)
         {
-            stream.LastBuffer = LastBuffer;
-            LastBuffer = null;
+            stream._lastBuffer = _lastBuffer;
+            _lastBuffer = null;
             var count = _localBuffer.Count;
+
             for (var i = 0; i < count; i++)
                 stream._localBuffer.Enqueue(_localBuffer.Dequeue());
+
             stream._length += _length;
             _length = 0;
             _localBuffer.Clear();
