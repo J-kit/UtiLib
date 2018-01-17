@@ -17,8 +17,6 @@ namespace UtilLibTest
             var copy1 = original.DeepCopy();
             var copy2 = original.SafeDeepCopy();
 
-            "".ToHash().ToHexString();
-
             Assert.AreNotEqual(original, copy1);
             Assert.AreNotEqual(original, copy2);
             Assert.AreNotEqual(copy1, copy2);
@@ -26,6 +24,17 @@ namespace UtilLibTest
             Assert.AreEqual(original.Message, copy1.Message);
             Assert.AreEqual(original.Message, copy2.Message);
             Assert.AreEqual(copy1.Message, copy2.Message);
+
+            //var kk = new ccc();
+        }
+    }
+
+    public abstract class ccc
+    {
+        public abstract void DoStuff(string input);
+
+        public virtual void Dokk()
+        {
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using UtiLib.Cryptography;
+using UtiLib.IO.Cryptography;
 
 // ReSharper disable once CheckNamespace
 namespace System

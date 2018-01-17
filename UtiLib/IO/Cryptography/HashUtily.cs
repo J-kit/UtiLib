@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace UtiLib.Cryptography
+namespace UtiLib.IO.Cryptography
 {
     public static class HashUtily
     {

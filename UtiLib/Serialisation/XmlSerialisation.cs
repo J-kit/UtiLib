@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
-using UtiLib.Extensions;
 
 namespace UtiLib.Serialisation
 {
@@ -19,6 +19,7 @@ namespace UtiLib.Serialisation
             {
                 new XmlSerializer(typeof(T)).Serialize(ms, input);
                 ms.Position = 0L;
+
                 return ms.ToArray();
             }
         }

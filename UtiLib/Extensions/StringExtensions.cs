@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
+using UtiLib;
 
 // ReSharper disable once CheckNamespace
 namespace System
@@ -80,12 +82,79 @@ namespace System
 
         public static string UrlEncode(this string input)
         {
-            return HttpUtility.UrlEncode(input);
+            return HttpUtility.UrlEncode(input, Settings.DefaultEncoding);
         }
 
         public static string UrlDecode(this string input)
         {
-            return HttpUtility.UrlDecode(input);
+            return HttpUtility.UrlDecode(input, Settings.DefaultEncoding);
         }
+
+        public static string HtmlEncode(this string input)
+        {
+            return HttpUtility.HtmlEncode(input);
+        }
+
+        public static string HtmlDecode(this string input)
+        {
+            return HttpUtility.HtmlDecode(input);
+        }
+
+        /// <summary>
+        /// Parses a string into an Enum
+        /// </summary>
+        /// <typeparam name="T">The type of the Enum</typeparam>
+        /// <param name="value">String value to parse</param>
+        /// <param name="ignorecase">Ignore the case of the string being parsed</param>
+        /// <returns>The Enum corresponding to the stringExtensions</returns>
+        public static T ToEnum<T>(this string value, bool ignorecase)
+        {
+            if (value == null)
+                throw new ArgumentNullException("Value");
+
+            value = value.Trim();
+
+            if (value.Length == 0)
+                throw new ArgumentNullException("Must specify valid information for parsing in the string.", "value");
+
+            var t = typeof(T);
+            if (!t.IsEnum)
+                throw new ArgumentException("Type provided must be an Enum.", "T");
+
+            return (T)Enum.Parse(t, value, ignorecase);
+        }
+
+        /// <summary>
+        /// Determines whether the string is not null or empty.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool IsNotNullOrEmpty(this string input)
+        {
+            return !String.IsNullOrEmpty(input);
+        }
+
+        /// <summary>
+        ///  Determines whether it is a valid URL.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static bool IsValidUrl(this string text)
+        {
+            return ValidUrlRegex.IsMatch(text);
+        }
+
+        /// <summary>
+        /// Determines whether it is a valid email address
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public static bool IsValidEmailAddress(this string email)
+        {
+            return ValidMailRegex.IsMatch(email);
+        }
+
+        private static readonly Regex ValidUrlRegex = new Regex(@"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?");
+        private static readonly Regex ValidMailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
     }
 }

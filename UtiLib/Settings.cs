@@ -16,6 +16,8 @@ namespace UtiLib
 
         public static Encoding DefaultEncoding { get; set; }
 
+        public static bool AllowLogBreak { get; set; }
+
         static Settings()
         {
             DefaultJsonSerializer = DefaultSerializer = new JsonSerializer();
