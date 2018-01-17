@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsolEx.cs" />
     <Compile Include="Environment\Dedection.cs" />
     <Compile Include="Extensions\AsyncEnumerableExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />

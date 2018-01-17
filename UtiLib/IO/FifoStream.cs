@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using UtiLib.Shared.Enums;
 
 namespace UtiLib.IO
 {
@@ -90,7 +91,7 @@ namespace UtiLib.IO
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            BufferObject cBuf = null;
+            BufferObject cBuf;
 
             var tCount = count;
             var cOffset = offset;
@@ -118,8 +119,7 @@ namespace UtiLib.IO
                     if (cBuf.Length == 0)
                     {
                         if (_localBuffer.Dequeue().EntityId != cBuf.EntityId)
-                            Debugger
-                                .Break(); // Log.Write("[FifoStream] Entity id's don't match! (Parallel usage?)", LogSeverity.ErrorBreak);
+                            Settings.Logger.Log("[FifoStream] Entity id's don't match! (Parallel usage?)", LogSeverity.ErrorBreak);
 
                         cBuf.ReIntegrate();
                         cBuf = null;
