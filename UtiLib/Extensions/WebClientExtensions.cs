@@ -36,10 +36,10 @@ namespace System
                 => (await wc.DownloadStringTaskAsync(uri)).ConvertResultJson<T>();
 
         private static T ConvertResultJson<T>(this string input) where T : class
-                => input.ConvertResult<T>(Settings.DefaultJsonSerializer);
+                => input.ConvertResult<T>(Settings.JsonSerializer);
 
         private static T ConvertResultXml<T>(this string input) where T : class
-                => input.ConvertResult<T>(Settings.DefaultXmlSerializer);
+                => input.ConvertResult<T>(Settings.XmlSerializer);
 
         private static T ConvertResult<T>(this string input, ISerializer serializer) where T : class
         {

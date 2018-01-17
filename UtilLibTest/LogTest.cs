@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UtiLib.Logging.LogProvider;
 using UtiLib.Shared.Enums;

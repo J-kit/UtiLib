@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UtiLib.Environment;
 using UtiLib.Logging;
 using UtiLib.Logging.LogProvider;
 using UtiLib.Shared.Enums;
-using UtiLib.Shared.Interfaces;
 
 namespace UtiLib.ConsoleTests
 {
