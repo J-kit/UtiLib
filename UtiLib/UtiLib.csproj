@@ -60,6 +60,9 @@
     <Compile Include="IO\Ringbuffer.cs" />
     <Compile Include="IO\FifoStream.cs" />
     <Compile Include="Logging\FormatProvider\DefaultFormatProvider.cs" />
+    <Compile Include="Logging\LogProvider\FileLog.cs" />
+    <Compile Include="Logging\LogProvider\StreamLogBase.cs" />
+    <Compile Include="Logging\LogProvider\StreamLogger.cs" />
     <Compile Include="Shared\Interfaces\ILogFormatProvider.cs" />
     <Compile Include="Shared\Interfaces\ILogProvider.cs" />
     <Compile Include="Logging\LogBase.cs" />

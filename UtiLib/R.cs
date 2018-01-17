@@ -64,8 +64,10 @@ namespace UtiLib
             isError = false;
             Message = null;
 
+#pragma warning disable IDE0016 // throw-Ausdruck verwenden
             if (value == null)
                 throw new System.ArgumentNullException(nameof(value), "Return of ok must not be null.");
+#pragma warning restore IDE0016 // throw-Ausdruck verwenden
 
             Value = value;
         }
@@ -74,7 +76,7 @@ namespace UtiLib
         {
             isError = true;
             Message = message;
-            Value = default(T);
+            Value = default;
         }
 
         /// <summary>Creates a new failed result with a message</summary>
