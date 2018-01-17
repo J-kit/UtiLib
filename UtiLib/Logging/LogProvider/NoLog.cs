@@ -1,4 +1,5 @@
-﻿using UtiLib.Shared.Interfaces;
+﻿using UtiLib.Shared.Enums;
+using UtiLib.Shared.Interfaces;
 
 namespace UtiLib.Logging.LogProvider
 {

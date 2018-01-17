@@ -1,4 +1,5 @@
 ﻿using UtiLib.Logging;
+using UtiLib.Shared.Enums;
 
 namespace UtiLib.Shared.Interfaces
 {

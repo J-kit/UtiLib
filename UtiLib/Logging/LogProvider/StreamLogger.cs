@@ -1,4 +1,5 @@
 ﻿using System;
+using UtiLib.Shared.Enums;
 
 namespace UtiLib.Logging.LogProvider
 {

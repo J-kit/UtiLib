@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using UtiLib.Shared.Enums;
 using UtiLib.Shared.Interfaces;
 
 namespace UtiLib.Logging.LogProvider
 {
     [DebuggerNonUserCode]
     [DebuggerStepThrough]
-    public class ConsoleLog : LogBase
+    public class ConsoleLogger : LogBase
     {
         private static readonly object Writelock = new object();
 
@@ -21,11 +22,11 @@ namespace UtiLib.Logging.LogProvider
             [LogSeverity.ErrorBreak] = ConsoleColor.Red,
         };
 
-        public ConsoleLog() : base()
+        public ConsoleLogger() : base()
         {
         }
 
-        public ConsoleLog(ILogFormatProvider formatProvider) : base(formatProvider)
+        public ConsoleLogger(ILogFormatProvider formatProvider) : base(formatProvider)
         {
         }
 

@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
+using UtiLib.Shared.Enums;
 
 namespace UtiLib.Logging.LogProvider
 {
-    public class DebugLog : LogBase
+    public class DebugLogger : LogBase
     {
         public override void Log(string logText, LogSeverity severity)
         {
