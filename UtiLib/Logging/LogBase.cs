@@ -10,7 +10,7 @@ namespace UtiLib.Logging
 {
     public abstract class LogBase : ILogger
     {
-        public ILogFormatProvider FormatProvider { get; set; }
+        public virtual ILogFormatProvider FormatProvider { get; set; }
 
         protected LogBase()
         {

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Environment\Dedection.cs" />
     <Compile Include="Extensions\AsyncEnumerableExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="IO\Cryptography\HashUtily.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="IO\Ringbuffer.cs" />
     <Compile Include="IO\FifoStream.cs" />
     <Compile Include="Logging\FormatProvider\DefaultFormatProvider.cs" />
+    <Compile Include="Logging\LogFactory.cs" />
     <Compile Include="Logging\LogProvider\FileLogger.cs" />
     <Compile Include="Logging\LogProvider\MulticastLogger.cs" />
     <Compile Include="Logging\LogProvider\StreamLogBase.cs" />

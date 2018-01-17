@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -18,22 +17,31 @@ namespace UtiLib.Logging.LogProvider
         private readonly List<ILogger> _loggers;
         private readonly object _lockObject = new object();
 
+        public override ILogFormatProvider FormatProvider
+        {
+            get => base.FormatProvider;
+            set
+            {
+                lock (_lockObject)
+                {
+                    base.FormatProvider = value;
+                    _loggers?.ForEach(x => x.FormatProvider = value);
+                }
+            }
+        }
+
         public ILogger this[int key]
         {
             get => SafeAccess(key);
             set => SafeAccess(key, value);
         }
 
-        private ILogger SafeAccess(int key)
+        private ILogger SafeAccess(int key, ILogger logger = default)
         {
             lock (_lockObject)
-                return _loggers[key];
-        }
-
-        private void SafeAccess(int key, ILogger logger)
-        {
-            lock (_lockObject)
-                _loggers[key] = logger;
+            {
+                return logger == default(ILogger) ? _loggers[key] : (_loggers[key] = logger);
+            }
         }
 
         public MulticastLogger()
@@ -44,6 +52,13 @@ namespace UtiLib.Logging.LogProvider
         public MulticastLogger(IEnumerable<ILogger> loggers)
         {
             _loggers = loggers as List<ILogger> ?? loggers.ToList();
+            _loggers?.ForEach(x => x.FormatProvider = FormatProvider);
+        }
+
+        public MulticastLogger(params ILogger[] loggers)
+        {
+            _loggers = loggers.ToList();
+            _loggers?.ForEach(x => x.FormatProvider = FormatProvider);
         }
 
         public void AddLogger(ILogger logger)
@@ -62,10 +77,7 @@ namespace UtiLib.Logging.LogProvider
         {
             lock (_lockObject)
             {
-                foreach (var logger in _loggers)
-                {
-                    logger.Log(logText, severity);
-                }
+                _loggers.ForEach(x => x.Log(logText, severity));
             }
         }
     }

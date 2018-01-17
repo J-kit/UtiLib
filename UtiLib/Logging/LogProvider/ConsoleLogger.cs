@@ -39,9 +39,7 @@ namespace UtiLib.Logging.LogProvider
         [DebuggerStepThrough]
         public override void Log(string logText, LogSeverity severity)
         {
-            if (!ColorDict.TryGetValue(severity, out var cc, ConsoleColor.White))
-                cc = ConsoleColor.White;
-
+            ColorDict.TryGetValue(severity, out var cc, ConsoleColor.White);
             logText = FormatProvider.Format(logText);
 
             WriteColorful(logText, cc);

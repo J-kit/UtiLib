@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LogTest.cs" />
     <Compile Include="Shared\SerialisationTest.cs" />
     <Compile Include="SerialisationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

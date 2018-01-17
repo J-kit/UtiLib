@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -17,6 +18,11 @@ namespace System
 
     public static class StringExtensions
     {
+        public static string JoinStrings(this IEnumerable<string> input, string seperator)
+        {
+            return string.Join(seperator, input);
+        }
+
         /// <summary>
         /// Synonyme for string.GetString(StringEncoding.Hexadecimal);
         /// </summary>
