@@ -11,6 +11,7 @@
     <AssemblyName>UtiLib</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,10 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsolEx.cs" />
-    <Compile Include="Delegate\ActionConvert.cs" />
-    <Compile Include="Delegate\DelegateConverter.cs" />
-    <Compile Include="Delegate\FuncConvert.cs" />
-    <Compile Include="Environment\Dedection.cs" />
+    <Compile Include="Delegates\ActionConvert.cs" />
+    <Compile Include="Delegates\DelegateConverter.cs" />
+    <Compile Include="Delegates\FuncConvert.cs" />
+    <Compile Include="Environment\OperatingSystemDedection.cs" />
+    <Compile Include="Environment\WindowsUser.cs" />
+    <Compile Include="Net\Discovery\IcmpPacket.cs" />
+    <Compile Include="Net\Headers\IpHeader.cs" />
+    <Compile Include="Net\Headers\ProtocolVersion.cs" />
+    <Compile Include="Shared\Enums\EnvironmentDefinition.cs" />
     <Compile Include="Extensions\AsyncEnumerableExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="IO\Cryptography\HashUtily.cs" />
@@ -70,7 +76,9 @@
     <Compile Include="Logging\LogProvider\MulticastLogger.cs" />
     <Compile Include="Logging\LogProvider\StreamLogBase.cs" />
     <Compile Include="Logging\LogProvider\StreamLogger.cs" />
+    <Compile Include="Net\Discovery\NetDiscover.cs" />
     <Compile Include="Shared\Enums\LogSeverity.cs" />
+    <Compile Include="Shared\Generic\DynamicArray.cs" />
     <Compile Include="Shared\Interfaces\ILogFormatProvider.cs" />
     <Compile Include="Shared\Interfaces\ILogProvider.cs" />
     <Compile Include="Logging\LogBase.cs" />

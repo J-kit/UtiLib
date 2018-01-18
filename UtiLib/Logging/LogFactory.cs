@@ -1,5 +1,6 @@
 ﻿using UtiLib.Environment;
 using UtiLib.Logging.LogProvider;
+using UtiLib.Shared.Enums;
 using UtiLib.Shared.Interfaces;
 
 namespace UtiLib.Logging

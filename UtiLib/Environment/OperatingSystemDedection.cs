@@ -1,17 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using UtiLib.Shared.Enums;
+using System.Security.Principal;
 
 namespace UtiLib.Environment
 {
-    public enum EnvironmentDefinition
-    {
-        Default,
-        Console,
-        Gui,
-        Service,
-    }
-
     public class Dedection
     {
         [DllImport("kernel32.dll")]
@@ -76,11 +72,6 @@ namespace UtiLib.Environment
             {
                 return EnvironmentDefinition.Gui;
             }
-        }
-
-        private static bool IsRunningOnMono()
-        {
-            return Type.GetType("Mono.Runtime") != null;
         }
     }
 }

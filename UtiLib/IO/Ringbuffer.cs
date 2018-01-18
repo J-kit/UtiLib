@@ -289,6 +289,7 @@ namespace UtiLib.IO
         public void Dispose()
         {
             Reset();
+            ReIntegrate();
         }
 
         public void ReIntegrate()

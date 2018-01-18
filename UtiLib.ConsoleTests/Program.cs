@@ -1,8 +1,19 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Security.Principal;
+using System.Threading.Tasks;
+using UtiLib.ConsoleTests.Tests;
 using UtiLib.Environment;
 using UtiLib.Logging;
 using UtiLib.Logging.LogProvider;
 using UtiLib.Shared.Enums;
+using UtiLib.Delegates;
+using UtiLib.Net.Discovery;
 
 namespace UtiLib.ConsoleTests
 {
@@ -10,28 +21,15 @@ namespace UtiLib.ConsoleTests
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine($"Current Environment: {Dedection.CurrentEnvironment}/{System.Environment.OSVersion}");
-            LogExample();
-            MulticastLogExample();
+            var elevated = WindowsUser.IsElevated;
+
+            MyPing mp = new MyPing(x => Settings.Logger.Log($"{x}", LogSeverity.Information));
+
+            mp.EnqueueIp("10.0.0.138".AsIpAddress());
             Console.ReadLine();
-        }
-
-        /// <summary>
-        /// Letting the Library chooce which Logger to choose (Console, Debug (or File?))
-        /// </summary>
-        private static void LogExample()
-        {
-            var cLogger = LogFactory.DefaultLogger;
-            cLogger.Log("A really serious error!", LogSeverity.Error);
-        }
-
-        /// <summary>
-        /// Example how to multicast logs to several destinations (File, Console, Debug log,...)
-        /// </summary>
-        private static void MulticastLogExample()
-        {
-            var cLogger = new MulticastLogger(new ConsoleLogger(), new DebugLogger());
-            cLogger.Log("Something went wrong!", LogSeverity.Warning);
+            DelegatePlayground.CreateDelegate();
+            LogTests.DoTest();
+            Console.ReadLine();
         }
     }
 }// new ConsoleLogger(), new DebugLogger() 

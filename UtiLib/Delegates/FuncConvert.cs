@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UtiLib.Delegate
+namespace UtiLib.Delegates
 {
     public class FuncConvert
     {
@@ -9,7 +9,7 @@ namespace UtiLib.Delegate
         /// </summary>
         /// <param name="sourceDelegate">Should be Func<TX,...></param>
         /// <returns></returns>
-        public static Func<object[], object> Convert(System.Delegate sourceDelegate)
+        public static Func<object[], object> Convert(Delegate sourceDelegate)
         {
             if (sourceDelegate.Method.ReturnType == typeof(void))
                 throw new Exception("Invalid source delegate Type");
@@ -23,7 +23,7 @@ namespace UtiLib.Delegate
         /// <typeparam name="TReturn">The required return type</typeparam>
         /// <param name="sourceDelegate">Should be Func<TX,...></param>
         /// <returns></returns>
-        public static Func<object[], TReturn> Convert<TReturn>(System.Delegate sourceDelegate)
+        public static Func<object[], TReturn> Convert<TReturn>(Delegate sourceDelegate)
         {
             if (sourceDelegate.Method.ReturnType == typeof(void))
                 throw new Exception("Invalid source delegate Type");

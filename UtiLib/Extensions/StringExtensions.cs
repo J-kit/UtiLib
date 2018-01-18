@@ -12,6 +12,7 @@ namespace System
     {
         Default,
         Hexadecimal,
+        FormattedByte,
         Ascii,
         Utf8
     }
@@ -41,10 +42,14 @@ namespace System
 
         public static string GetString(this byte[] input, StringEncoding encoding = StringEncoding.Utf8)
         {
+            //Select(x => x.ToString()).JoinStrings(" ")
             switch (encoding)
             {
                 case StringEncoding.Hexadecimal:
                     return string.Concat(input.Select(b => b.ToString("x2")).ToArray());
+
+                case StringEncoding.FormattedByte:
+                    return input.Select(x => x.ToString()).JoinStrings(" ");
 
                 case StringEncoding.Ascii:
                     return Encoding.ASCII.GetString(input);

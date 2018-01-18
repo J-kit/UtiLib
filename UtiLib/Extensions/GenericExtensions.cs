@@ -27,5 +27,24 @@ namespace System
             }
             return default(TX);
         }
+
+        public static T[] Propagate<T>(this T[] dArray, T value)
+        {
+            for (int i = 0; i < dArray.Length; i++)
+            {
+                dArray[i] = value;
+            }
+
+            return dArray;
+        }
+
+        public static T[] Propagate<T>(this T[] dArray, Func<int, T> func)
+        {
+            for (int i = 0; i < dArray.Length; i++)
+            {
+                dArray[i] = func(i);
+            }
+            return dArray;
+        }
     }
 }
