@@ -38,7 +38,7 @@ namespace UtiLib.ConsoleTests
             sniffer.OnUnknownPacketCaptured += (_, __) => Logger.Log($"Unknown packet received");
             sniffer.OnPacketCaptured += OnSnifferOnOnPacketCaptured;
 
-            sniffer.FilteringRule = packet => packet.Header.ProtocolType == ProtocolType.Udp;
+            sniffer.FilteringRule = x => x.Body.SourcePort == 53 || x.Body.DestinationPort == 53;//x.Header.ProtocolType == ProtocolType.Udp;
 
             sniffer.Start();
             Logger.Log($"Sniffing started");
@@ -64,7 +64,17 @@ namespace UtiLib.ConsoleTests
 
         private static void OnSnifferOnOnPacketCaptured(object _, SniffingPacket x)
         {
-            Logger.Log($"Received {x.Header.ProtocolType} packet: {x.Header.SourceAddress}:{x.Body.SourcePort} ===> {x.Header.DestinationAddress}:{x.Body.DestinationPort}");
+            if (x.DnsInfo == null)
+            {
+                Logger.Log($"({x.Header.Data.Length}/{x.Body.Data.Length})" +
+                           $"{x.Header.ProtocolType} packet: " +
+                           $"{x.Header.SourceAddress}:{x.Body.SourcePort} ===> " +
+                           $"{x.Header.DestinationAddress}:{x.Body.DestinationPort}");
+            }
+            else
+            {
+                Debugger.Break();
+            }
         }
 
         //private static void OnMpOnResult(object _, IcmpPacket packet)

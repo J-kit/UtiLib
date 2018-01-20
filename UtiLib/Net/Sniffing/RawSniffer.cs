@@ -122,7 +122,7 @@ namespace UtiLib.Net.Sniffing
                     return;
             }
 
-            if (53.MultiEquals(packet.Body.SourcePort, packet.Body.DestinationPort))
+            if (53.MultiEqualsOr(packet.Body.SourcePort, packet.Body.DestinationPort))
             {
                 packet.DnsInfo = new DnsHeader(ipHeader.Data, (int)ipHeader.MessageLength);
             }

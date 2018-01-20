@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 
@@ -33,6 +34,7 @@ namespace UtiLib.Net.Headers
                 //Array.Copy(dataBuffer, 8, Data, 0, bytesReceived - 8);
 
                 Data = br.ReadBytes((int)(bytesReceived - br.BaseStream.Position));
+                //    Debugger.Break();
             }
         }
     }

@@ -15,17 +15,21 @@ namespace System
         /// <param name="reference"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static bool MultiEquals<T>(this T reference, params T[] options)
+        public static bool MultiEqualsAnd<T>(this T reference, params T[] options)
         {
-            for (var i = 0; i < options.Length; i++)
-            {
-                if (!i.Equals(reference))
-                {
-                    return false;
-                }
-            }
+            return options.All(t => t.Equals(reference));
+        }
 
-            return true;
+        /// <summary>
+        /// Returns true when all <see cref="options"/> are eqal to <see cref="reference"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reference"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static bool MultiEqualsOr<T>(this T reference, params T[] options)
+        {
+            return options.Contains(reference);
         }
     }
 }
