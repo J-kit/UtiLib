@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 // ReSharper disable once CheckNamespace
 namespace System
 {
-    public static class EnumerableExtensions
+    public static class LinqExtensions
     {
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Func<T, bool> func)
         {
@@ -61,6 +62,19 @@ namespace System
                     onException?.Invoke(ex);
                 }
             }
+        }
+
+        /// <summary>
+        /// Combines .Select(x).ToArray()
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static TResult[] ToArray<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+        {
+            return source.Select(selector).ToArray();
         }
     }
 }

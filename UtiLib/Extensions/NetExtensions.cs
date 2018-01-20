@@ -30,5 +30,11 @@ namespace System
         {
             return IPAddress.TryParse(address, out var ipAddress) ? ipAddress : Dns.GetHostAddresses(address).FirstOrDefault();
         }
+
+        public static uint ToUint(this IPAddress input)
+        {
+            Array.Reverse(input.GetAddressBytes());
+            return BitConverter.ToUInt32(input.GetAddressBytes(), 0);
+        }
     }
 }

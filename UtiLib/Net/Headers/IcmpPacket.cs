@@ -1,24 +1,25 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using UtiLib.IO;
-using UtiLib.Net.Headers;
+using System.Net.NetworkInformation;
 using UtiLib.Shared.Generic;
 
-namespace UtiLib.Net.Discovery
+namespace UtiLib.Net.Headers
 {
-    public class IcmpPacket
+    public class IcmpPacket : IProtocolHeader
     {
-        public IpHeader IpHeader { get; set; }
+        #region IProtocolHeader Implementation
+
+        ushort IProtocolHeader.DestinationPort { get; } = 0;
+        ushort IProtocolHeader.SourcePort { get; } = 0;
+        ushort IProtocolHeader.HeaderLength => (ushort)PingData;
+        short IProtocolHeader.Checksum => (short)CheckSum;
+
+        #endregion IProtocolHeader Implementation
+
+        public IPStatus IpStatus => (IPStatus)Type;
 
         public byte Type { get; set; }              // Message Typ
         public byte SubCode { get; set; }           // Subcode Typ
-
         public ushort CheckSum { get; set; }        // Checksumme
         public ushort Identifier { get; set; }      // Identifizierer
         public ushort SequenceNumber { get; set; }  // Sequenznummer
@@ -26,30 +27,13 @@ namespace UtiLib.Net.Discovery
 
         public int PingData { get; set; }
 
-        private const int SocketError = -1;
         private const int IcmpEcho = 8;
 
-        public IcmpPacket(byte[] rawBytes, int nReceived)
+        public IcmpPacket(byte[] dataBuffer, int bytesReceived)
         {
-            LoadBuffer(rawBytes, nReceived);
-        }
-
-        public IcmpPacket()
-        {
-            Reset();
-        }
-
-        /// <summary>
-        /// Loads rawpackets
-        /// </summary>
-        /// <param name="rawBytes"></param>
-        /// <param name="nReceived"></param>
-        public void LoadBuffer(byte[] rawBytes, int nReceived)
-        {
-            IpHeader = new IpHeader(rawBytes, nReceived);
-            Console.WriteLine(IpHeader.ProtocolType);
-            using (var input = new MemoryStream(IpHeader.Data))
-            using (var br = new BinaryReader(input))
+            //  Console.WriteLine(IpHeader.ProtocolType);
+            using (var ms = new MemoryStream(dataBuffer, 0, bytesReceived))
+            using (var br = new BinaryReader(ms))
             {
                 Type = br.ReadByte();
                 SubCode = br.ReadByte();
@@ -57,9 +41,13 @@ namespace UtiLib.Net.Discovery
                 CheckSum = br.ReadUInt16();
                 Identifier = br.ReadUInt16();
                 SequenceNumber = br.ReadUInt16();
-                Data = br.ReadBytes((int)(IpHeader.Data.Length - input.Position));
-                Debugger.Break();
+                Data = br.ReadBytes((int)(bytesReceived - ms.Position));
             }
+        }
+
+        public IcmpPacket()
+        {
+            Reset();
         }
 
         public DynamicArray<byte> GeneratePayload()
@@ -76,8 +64,8 @@ namespace UtiLib.Net.Discovery
             if (!Serialize(sendbuf, packetSize, PingData).Ok)
                 throw new InvalidDataException("Data serialisation failed");
 
-            Console.WriteLine(CheckSum);
-            Console.WriteLine(BitConverter.GetBytes(CheckSum).GetString(StringEncoding.FormattedByte));
+            //Console.WriteLine(CheckSum);
+            //Console.WriteLine(BitConverter.GetBytes(CheckSum).GetString(StringEncoding.FormattedByte));
 
             CheckSum = 0;
 
@@ -90,8 +78,6 @@ namespace UtiLib.Net.Discovery
 
             var icmpPktBuffer = new byte[packetSize];
             var index = Serialize(icmpPktBuffer, packetSize, PingData);
-
-            // Console.WriteLine($"{PingData} / {packetSize} / {icmpPktBuffer.ToHash<MD5>().GetHexString()}");
 
             if (!index.Ok)
                 return false;
@@ -134,30 +120,6 @@ namespace UtiLib.Net.Discovery
             return index;
         }
 
-        private void WriteArray(Array sourceArray, Array destinationArray, ref int index, int? length = default)
-        {
-            var rl = length ?? sourceArray.Length;
-            Array.Copy(sourceArray, 0, destinationArray, index, rl);
-            index += rl;
-        }
-
-        private ushort Checksum(ushort[] buffer, int size)
-        {
-            var cksum = 0;
-            var counter = 0;
-
-            while (size > 0)
-            {
-                cksum += Convert.ToInt32(buffer[counter]);
-                counter += 1;
-                size -= 1;
-            }
-
-            cksum = (cksum >> 16) + (cksum & 0xffff);
-            cksum += (cksum >> 16);
-            return (ushort)(~cksum);
-        }
-
         /// <summary>
         /// Resets the data of the packet
         /// </summary>
@@ -172,37 +134,28 @@ namespace UtiLib.Net.Discovery
 
             Data = new byte[PingData].Propagate((byte)'#');
         }
+
+        private static void WriteArray(Array sourceArray, Array destinationArray, ref int index, int? length = default)
+        {
+            var rl = length ?? sourceArray.Length;
+            Array.Copy(sourceArray, 0, destinationArray, index, rl);
+            index += rl;
+        }
+
+        private static ushort Checksum(ushort[] buffer, int size)
+        {
+            var cksum = 0;
+            var counter = 0;
+
+            for (var s = size - 1; s >= 0; s--)
+            {
+                cksum += buffer[counter];
+                counter += 1;
+            }
+
+            cksum = (cksum >> 16) + (cksum & 0xffff);
+            cksum += (cksum >> 16);
+            return (ushort)(~cksum);
+        }
     }
-
-    //public class IcmpPacket1 : IDisposable
-    //{
-    //    public readonly byte Type;               // Message Typ
-    //    public readonly byte SubCode;            // Subcode Typ
-    //    public readonly byte[] Data;             // Byte Array
-    //    public ushort CheckSum;                  // Checksumme
-    //    public readonly ushort Identifier;       // Identifizierer
-    //    public readonly ushort SequenceNumber;   // Sequenznummer
-
-    //    public int PingData { get; set; }
-
-    //    private const int SocketError = -1;
-    //    private const int IcmpEcho = 8;
-
-    //    public IcmpPacket1()
-    //    {
-    //        Type = IcmpEcho;
-    //        SubCode = 0;
-    //        CheckSum = 0;
-    //        Identifier = 45;
-    //        SequenceNumber = 500;
-    //        PingData = 32;
-
-    //        Data = new byte[PingData].Propagate((byte)'#');
-    //    }
-
-    //    public void Dispose()
-    //    {
-    //        //_buffer?.Dispose();
-    //    }
-    //}
 }

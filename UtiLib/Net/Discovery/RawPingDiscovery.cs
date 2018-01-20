@@ -1,62 +1,85 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using System.Threading;
 using UtiLib.Net.Headers;
 using UtiLib.Shared.Generic;
 
 namespace UtiLib.Net.Discovery
 {
-    internal class NetDiscover
+    public class RawPingDiscovery
     {
-    }
-
-    public class MyPing
-    {
-        private Action<IPAddress> _onPingReceive;
         private IcmpPacket _packet;// = new IcmpPacket();
         private Socket _socket;//= new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
         private int _intCount = 0;
 
         private readonly DynamicArray<byte> _payloadData;
 
-        public MyPing(Action<IPAddress> onPingReceive)
+        public EventHandler<IcmpPacket> OnResult;
+
+        public RawPingDiscovery()
         {
-            _onPingReceive = onPingReceive;
             _packet = new IcmpPacket();
 
             _payloadData = _packet.GeneratePayload();
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
         }
 
-        public void EnqueueIp(IPAddress input)
+        public void Enqueue(IPAddress input)
         {
             EndPoint epServer = (new IPEndPoint(input, 0));
-            _socket.BeginSendTo(_payloadData.Value, 0, _payloadData.Size, SocketFlags.None, epServer, null, null);
+            _socket.BeginSendTo(_payloadData.Value, 0, _payloadData.Size, SocketFlags.None, epServer, null, null);//SocketFlags.None
+            EnsureSocketListen();
+        }
 
-            if (_intCount < 20)
+        public void Enqueue(IEnumerable<IPAddress> input)
+        {
+            var ipEndpoints = input.Select(m => new IPEndPoint(m, 0));
+            foreach (var ipEndpoint in ipEndpoints)
             {
-                var receiveBuffer = new byte[256];
-                _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, receiveBuffer);
-                _intCount++;
+                _socket.BeginSendTo(_payloadData.Value, 0, _payloadData.Size, SocketFlags.None, ipEndpoint, null, null);//SocketFlags.None
+            }
+            EnsureSocketListen(20);
+        }
+
+        private void EnsureSocketListen(int amount = 1, int listenCap = 20)
+        {
+            var checkedAmount = Math.Min(amount, listenCap);
+
+            if (_intCount < listenCap)
+            {
+                for (var i = 0; i < checkedAmount; i++)
+                {
+                    var receiveBuffer = new byte[256];
+                    _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, receiveBuffer);
+                }
+
+                Interlocked.Add(ref _intCount, checkedAmount);
             }
         }
+
+        private readonly ConcurrentDictionary<uint, bool> _receivedIps = new ConcurrentDictionary<uint, bool>();
 
         private void ReceiveCallback(IAsyncResult x)
         {
             var receiveBuffer = x.AsyncState as byte[];
-            if (_onPingReceive != null && receiveBuffer != null)
+            if (receiveBuffer != null)
             {
                 var bytesRead = _socket.EndReceive(x);
-                var icParsed = new IcmpPacket(receiveBuffer, bytesRead);
+                var ipHeader = new IpHeader(receiveBuffer, bytesRead);
+                if (ipHeader.ProtocolType == ProtocolType.Icmp)
+                {
+                    if (!_receivedIps.ContainsKey(ipHeader.RawSourceAddress))
+                    {
+                        _receivedIps[ipHeader.RawSourceAddress] = true;
 
-                _onPingReceive(icParsed.IpHeader.SourceAddress);
+                        var icParsed = new IcmpPacket(ipHeader.Data, ipHeader.MessageLength);
+                        OnResult?.Invoke(this, icParsed);
+                    }
+                }
             }
 
             if (receiveBuffer != null)

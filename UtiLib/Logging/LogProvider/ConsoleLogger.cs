@@ -30,10 +30,7 @@ namespace UtiLib.Logging.LogProvider
         {
         }
 
-        public int GetWindowWith()
-        {
-            return Console.WindowWidth;
-        }
+        public override int WindowWith => Console.WindowWidth;
 
         [DebuggerNonUserCode]
         [DebuggerStepThrough]

@@ -19,5 +19,7 @@ namespace UtiLib.Logging
         }
 
         public abstract void Log(string logText, LogSeverity severity);
+
+        public virtual int WindowWith { get; } = 16;
     }
 }

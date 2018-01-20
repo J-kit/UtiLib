@@ -7,5 +7,7 @@ namespace UtiLib.Shared.Interfaces
         ILogFormatProvider FormatProvider { get; set; }
 
         void Log(string logText, LogSeverity severity);
+
+        int WindowWith { get; }
     }
 }

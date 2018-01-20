@@ -8,27 +8,27 @@ namespace UtiLib.Net.Headers
 {
     public class IpHeader
     {
-        private readonly byte byDifferentiatedServices;
+        private readonly byte _byDifferentiatedServices;
 
-        private readonly byte byHeaderLength;
+        private readonly byte _byHeaderLength;
 
-        private readonly byte byProtocol;
+        private readonly byte _byProtocol;
 
-        private readonly byte byTTL;
+        private readonly byte _byTtl;
 
-        private readonly byte byVersionAndHeaderLength;
+        private readonly byte _byVersionAndHeaderLength;
 
-        private readonly short sChecksum;
+        private readonly short _sChecksum;
 
-        private readonly uint uiDestinationIPAddress;
+        private readonly uint _uiDestinationIpAddress;
 
-        private readonly uint uiSourceIPAddress;
+        private readonly uint _uiSourceIpAddress;
 
-        private readonly ushort usFlagsAndOffset;
+        private readonly ushort _usFlagsAndOffset;
 
-        private readonly ushort usIdentification;
+        private readonly ushort _usIdentification;
 
-        private readonly ushort usTotalLength;
+        private readonly ushort _usTotalLength;
 
         public IpHeader(byte[] byBuffer, int nReceived)
         {
@@ -37,25 +37,25 @@ namespace UtiLib.Net.Headers
                 using (var input = new MemoryStream(byBuffer, 0, nReceived))
                 using (var binaryReader = new BinaryReader(input))
                 {
-                    byVersionAndHeaderLength = binaryReader.ReadByte();
-                    byDifferentiatedServices = binaryReader.ReadByte();
-                    usTotalLength = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-                    usIdentification = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-                    usFlagsAndOffset = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-                    byTTL = binaryReader.ReadByte();
-                    byProtocol = binaryReader.ReadByte();
-                    sChecksum = IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-                    uiSourceIPAddress = (uint)binaryReader.ReadInt32();
-                    uiDestinationIPAddress = (uint)binaryReader.ReadInt32();
+                    _byVersionAndHeaderLength = binaryReader.ReadByte();
+                    _byDifferentiatedServices = binaryReader.ReadByte();
+                    _usTotalLength = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
+                    _usIdentification = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
+                    _usFlagsAndOffset = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
+                    _byTtl = binaryReader.ReadByte();
+                    _byProtocol = binaryReader.ReadByte();
+                    _sChecksum = IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
+                    _uiSourceIpAddress = (uint)binaryReader.ReadInt32();
+                    _uiDestinationIpAddress = (uint)binaryReader.ReadInt32();
                 }
 
-                byHeaderLength = byVersionAndHeaderLength;
-                byHeaderLength = (byte)(byHeaderLength << 4);
-                byHeaderLength = (byte)(byHeaderLength >> 4);
-                byHeaderLength *= 4;
+                _byHeaderLength = _byVersionAndHeaderLength;
+                _byHeaderLength = (byte)(_byHeaderLength << 4);
+                _byHeaderLength = (byte)(_byHeaderLength >> 4);
+                _byHeaderLength *= 4;
 
-                Data = new byte[usTotalLength - byHeaderLength];
-                Array.Copy(byBuffer, byHeaderLength, Data, 0, Data.Length);
+                Data = new byte[_usTotalLength - _byHeaderLength];
+                Array.Copy(byBuffer, _byHeaderLength, Data, 0, Data.Length);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace UtiLib.Net.Headers
         {
             get
             {
-                var num = byVersionAndHeaderLength >> 4;
+                var num = _byVersionAndHeaderLength >> 4;
                 ProtocolVersion result;
                 if (num != 4)
                     result = num != 6 ? ProtocolVersion.Unknown : ProtocolVersion.IPv6;
@@ -77,17 +77,17 @@ namespace UtiLib.Net.Headers
             }
         }
 
-        public string HeaderLength => byHeaderLength.ToString();
+        public string HeaderLength => _byHeaderLength.ToString();
 
-        public ushort MessageLength => (ushort)(usTotalLength - byHeaderLength);
+        public ushort MessageLength => (ushort)(_usTotalLength - _byHeaderLength);
 
-        public string DifferentiatedServices => $"0x{byDifferentiatedServices:x2} ({byDifferentiatedServices})";
+        public string DifferentiatedServices => $"0x{_byDifferentiatedServices:x2} ({_byDifferentiatedServices})";
 
         public string Flags
         {
             get
             {
-                var num = usFlagsAndOffset >> 13;
+                var num = _usFlagsAndOffset >> 13;
                 return num == 2 ? "Don't fragment" : (num == 1 ? "More fragments to come" : num.ToString());
             }
         }
@@ -96,36 +96,39 @@ namespace UtiLib.Net.Headers
         {
             get
             {
-                var num = usFlagsAndOffset << 3;
+                var num = _usFlagsAndOffset << 3;
                 return (num >> 3).ToString();
             }
         }
 
         // ReSharper disable once InconsistentNaming
-        public string TTL => byTTL.ToString();
+        public string TTL => _byTtl.ToString();
 
         public ProtocolType ProtocolType
         {
             get
             {
-                if (Enum.IsDefined(typeof(ProtocolType), byProtocol))
+                if (Enum.IsDefined(typeof(ProtocolType), (int)_byProtocol))
                 {
-                    return (ProtocolType)byProtocol;
+                    return (ProtocolType)_byProtocol;
                 }
 
                 return ProtocolType.Unknown;
             }
         }
 
-        public string Checksum => $"0x{sChecksum:x2}";
+        public string Checksum => $"0x{_sChecksum:x2}";
 
-        public IPAddress SourceAddress => new IPAddress(uiSourceIPAddress);
+        public uint RawSourceAddress => _uiSourceIpAddress;
+        public uint RawDestinationAddress => _uiDestinationIpAddress;
 
-        public IPAddress DestinationAddress => new IPAddress(uiDestinationIPAddress);
+        public IPAddress SourceAddress => new IPAddress(_uiSourceIpAddress);
 
-        public string TotalLength => usTotalLength.ToString();
+        public IPAddress DestinationAddress => new IPAddress(_uiDestinationIpAddress);
 
-        public string Identification => usIdentification.ToString();
+        public string TotalLength => _usTotalLength.ToString();
+
+        public string Identification => _usIdentification.ToString();
 
         public byte[] Data { get; }
     }
