@@ -13,7 +13,11 @@ using UtiLib.Shared.Generic;
 
 namespace UtiLib.Net.Discovery
 {
-    public class RawPingDiscovery : IPingScaner
+    /// <summary>
+    /// Ping with little to no overhead.
+    /// A Bluescreen should not occur.
+    /// </summary>
+    public class RawPingScan : IPingScaner
     {
         private readonly DynamicArray<byte> _payloadData;
 
@@ -27,7 +31,7 @@ namespace UtiLib.Net.Discovery
         public EventHandler<PingCompletedEventArgs> OnResult;
         private IPingScaner _pingScanmerImplementation;
 
-        public RawPingDiscovery()
+        public RawPingScan()
         {
             _packet = new IcmpPacket();
 

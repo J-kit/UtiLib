@@ -57,7 +57,7 @@ namespace UtiLib.ConsoleTests
 
         private static void RawPingExample()
         {
-            RawPingDiscovery mp = new RawPingDiscovery();
+            RawPingScan mp = new RawPingScan();
             mp.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
 
             mp.Enqueue(NetMaskGenerator.GetAllIp());
@@ -68,7 +68,7 @@ namespace UtiLib.ConsoleTests
 
         private static void Main(string[] args)
         {
-            RawPingDiscovery mp = new RawPingDiscovery();
+            RawPingScan mp = new RawPingScan();
             // mp.OnResult += OnMpOnResult;
 
             mp.Enqueue(NetMaskGenerator.GetAllIp());

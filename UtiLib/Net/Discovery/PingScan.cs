@@ -6,6 +6,11 @@ using System.Threading;
 
 namespace UtiLib.Net.Discovery
 {
+    /// <summary>
+    /// Pings based on <see cref="Ping"/> objects.
+    /// Warning: Aborting an active massping may result in a Bluescreen.
+    /// You may concider using <see cref="RawPingScan"/> for this purpose
+    /// </summary>
     public class PingScan : IPingScaner
     {
         private readonly Queue<IEnumerator<IPAddress>> _ipQueue = new Queue<IEnumerator<IPAddress>>();
@@ -15,21 +20,38 @@ namespace UtiLib.Net.Discovery
         private IEnumerator<IPAddress> _currentEnumerator;
         private int _runningPingScanners;
 
+        /// <summary>
+        ///     Will be called when each ping has been completed
+        /// </summary>
         public EventHandler OnPingFinished { get; set; }
+
+        /// <summary>
+        ///     Will be called when a ping response is received
+        /// </summary>
         public EventHandler<PingCompletedEventArgs> OnResult { get; set; }
 
         public PingScan()
         {
             _pingOptions = new PingOptions(128, true);
-            //  _scanSuccessCallback = scanSuccessCallback;
         }
 
+        /// <summary>
+        ///     An Int32 value that specifies the maximum number of concurrent active scans
+        /// </summary>
         public int MaxConcurrentScans { get; set; } = 50;
-        public TimeSpan TimeOut { get; set; }
 
+        /// <summary>
+        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.
+        /// </summary>
+        public TimeSpan TimeOut { get; set; } = TimeSpan.MaxValue;
+
+        /// <summary>
+        ///     Indicates wether the ping operation has been completed
+        /// </summary>
         public bool PingCompleted { get; private set; }
 
         /// <summary>
+        ///     Enqueues x ip addresses for Scanning
         /// </summary>
         /// <param name="addresses"></param>
         public void Enqueue(IEnumerable<IPAddress> addresses)
@@ -60,9 +82,8 @@ namespace UtiLib.Net.Discovery
 
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
-            if (!e.Reply.Address.Equals(default(IPAddress))) //Happens some times that the ip is 0
-                if (e.Reply.Status == IPStatus.Success)
-                    OnResult?.Invoke(this, e);
+            if (!e.Reply.Address.Equals(default(IPAddress))) //Happens some times that the ip is 0 // && (e.Reply.Status == IPStatus.Success)
+                OnResult?.Invoke(this, e);
 
             var nextScanAddress = GetNextAddress();
 

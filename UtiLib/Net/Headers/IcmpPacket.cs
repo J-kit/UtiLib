@@ -5,6 +5,9 @@ using UtiLib.Shared.Generic;
 
 namespace UtiLib.Net.Headers
 {
+    /// <summary>
+    /// Generates or parses ICMP requests/responses
+    /// </summary>
     public class IcmpPacket : IProtocolHeader
     {
         #region IProtocolHeader Implementation
@@ -18,17 +21,42 @@ namespace UtiLib.Net.Headers
 
         public IPStatus IpStatus => (IPStatus)Type;
 
+        /// <summary>
+        ///     Message type aka. <see cref="IpStatus"/>
+        /// </summary>
         public byte Type { get; set; }              // Message Typ
+
+        /// <summary>
+        ///     Subcode type
+        /// </summary>
         public byte SubCode { get; set; }           // Subcode Typ
+
+        /// <summary>
+        ///     Packet checksum
+        /// </summary>
         public ushort CheckSum { get; set; }        // Checksumme
+
+        /// <summary>
+        ///     Packet identifier
+        /// </summary>
         public ushort Identifier { get; set; }      // Identifizierer
+
+        /// <summary>
+        /// Packet Sequencenumber
+        /// </summary>
         public ushort SequenceNumber { get; set; }  // Sequenznummer
+
         public byte[] Data { get; set; }            // Byte Array
 
         public int PingData { get; set; }
 
         private const int IcmpEcho = 8;
 
+        /// <summary>
+        /// Parses the results of <see cref="IpHeader"/>
+        /// </summary>
+        /// <param name="dataBuffer"></param>
+        /// <param name="bytesReceived"></param>
         public IcmpPacket(byte[] dataBuffer, int bytesReceived)
         {
             //  Console.WriteLine(IpHeader.ProtocolType);
@@ -45,12 +73,20 @@ namespace UtiLib.Net.Headers
             }
         }
 
+        /// <summary>
+        ///     Initializes packet for generation
+        /// </summary>
+        /// <param name="data"></param>
         public IcmpPacket(byte[] data = null)
         {
             Data = data;
             Reset();
         }
 
+        /// <summary>
+        ///     Serializes the current object to a <see cref="DynamicArray"/> which is ready to send over raw sockets
+        /// </summary>
+        /// <returns></returns>
         public DynamicArray<byte> GeneratePayload()
         {
             var packetSize = PingData + 8;
@@ -64,9 +100,6 @@ namespace UtiLib.Net.Headers
 
             if (!Serialize(sendbuf, packetSize, PingData).Ok)
                 throw new InvalidDataException("Data serialisation failed");
-
-            //Console.WriteLine(CheckSum);
-            //Console.WriteLine(BitConverter.GetBytes(CheckSum).GetString(StringEncoding.FormattedByte));
 
             CheckSum = 0;
 
