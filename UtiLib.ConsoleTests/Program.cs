@@ -24,16 +24,17 @@ namespace UtiLib.ConsoleTests
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        public static void SnifferExamples()
         {
-            //var interfaces = NetMaskGenerator.GetInterfaces();
-            //foreach (var ni in interfaces)
-            //{
-            //    Logger.Log($"{ni.Name}: {ni.Address}");
+            Logger.Log($"Is Elevated: {WindowsUser.IsElevated}");
+            Logger.Log("Listing Network Adapters...");
+            var interfaces = NetMaskGenerator.GetInterfaces();
+            foreach (var ni in interfaces)
+            {
+                Logger.Log($"{ni.Name}: {ni.Address}");
+            }
 
-            //    //Logger.Log();
-            //}
-            //    Debugger.Break();
+            Logger.Log("Starting socket");
             var sniffer = new RawSniffer { NetworkAdapter = "10.0.0.16".AsIpAddress() };
             sniffer.OnUnknownPacketCaptured += (_, __) => Logger.Log($"Unknown packet received");
             sniffer.OnPacketCaptured += OnSnifferOnOnPacketCaptured;
@@ -43,13 +44,30 @@ namespace UtiLib.ConsoleTests
             sniffer.Start();
             Logger.Log($"Sniffing started");
             Console.ReadLine();
-            var elevated = WindowsUser.IsElevated;
+        }
 
-            //foreach (var ipAddress in NetMaskGenerator.GetAllIp())
-            //{
-            //    Console.WriteLine(ipAddress);
-            //}
+        private static void PingExample()
+        {
+            var ps = new PingScan { TimeOut = TimeSpan.FromSeconds(2) };
+            ps.OnResult += (sender, address) => Logger.Log(address);
+            ps.OnPingFinished += (sender, eventArgs) => Logger.Log("PingScan Finished");
+            ps.Enqueue(NetMaskGenerator.GetAllIp());
+            Console.ReadLine();
+        }
 
+        private static void RawPingExample()
+        {
+            RawPingDiscovery mp = new RawPingDiscovery();
+            mp.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
+
+            mp.Enqueue(NetMaskGenerator.GetAllIp());
+
+            // mp.Enqueue("10.0.0.138".AsIpAddress());
+            Console.ReadLine();
+        }
+
+        private static void Main(string[] args)
+        {
             RawPingDiscovery mp = new RawPingDiscovery();
             // mp.OnResult += OnMpOnResult;
 

@@ -1,24 +1,31 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using UtiLib.Net.Headers;
+using UtiLib.Reflection;
 using UtiLib.Shared.Generic;
 
 namespace UtiLib.Net.Discovery
 {
-    public class RawPingDiscovery
+    public class RawPingDiscovery : IPingScaner
     {
-        private IcmpPacket _packet;// = new IcmpPacket();
-        private Socket _socket;//= new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
-        private int _intCount = 0;
-
         private readonly DynamicArray<byte> _payloadData;
 
-        public EventHandler<IcmpPacket> OnResult;
+        private readonly ConcurrentDictionary<uint, bool> _receivedIps = new ConcurrentDictionary<uint, bool>();
+        private int _intCount;
+        private readonly IcmpPacket _packet;
+
+        private readonly Stopwatch _pingStopwatch;
+        private readonly Socket _socket;
+
+        public EventHandler<PingCompletedEventArgs> OnResult;
+        private IPingScaner _pingScanmerImplementation;
 
         public RawPingDiscovery()
         {
@@ -26,23 +33,46 @@ namespace UtiLib.Net.Discovery
 
             _payloadData = _packet.GeneratePayload();
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
+            _pingStopwatch = Stopwatch.StartNew();
         }
+
+        public bool EnableTimeMeasure { get; set; } = true;
+
+        int IPingScaner.MaxConcurrentScans { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool IPingScaner.PingCompleted => throw new NotImplementedException();
+        TimeSpan IPingScaner.TimeOut { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        EventHandler IPingScaner.OnPingFinished { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        EventHandler<PingCompletedEventArgs> IPingScaner.OnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void Enqueue(IPAddress input)
         {
-            EndPoint epServer = (new IPEndPoint(input, 0));
-            _socket.BeginSendTo(_payloadData.Value, 0, _payloadData.Size, SocketFlags.None, epServer, null, null);//SocketFlags.None
+            var epServer = new IPEndPoint(input, 0);
+            SendPing(epServer);
             EnsureSocketListen();
         }
 
         public void Enqueue(IEnumerable<IPAddress> input)
         {
             var ipEndpoints = input.Select(m => new IPEndPoint(m, 0));
-            foreach (var ipEndpoint in ipEndpoints)
-            {
-                _socket.BeginSendTo(_payloadData.Value, 0, _payloadData.Size, SocketFlags.None, ipEndpoint, null, null);//SocketFlags.None
-            }
+            foreach (var ipEndpoint in ipEndpoints) SendPing(ipEndpoint);
             EnsureSocketListen(20);
+        }
+
+        private void SendPing(EndPoint ep)
+        {
+            DynamicArray<byte> packet;
+            if (EnableTimeMeasure)
+            {
+                var cms = _pingStopwatch.ElapsedTicks;
+                var bcms = BitConverter.GetBytes(cms);
+                packet = new IcmpPacket(bcms).GeneratePayload();
+            }
+            else
+            {
+                packet = _payloadData;
+            }
+
+            _socket.BeginSendTo(packet.Value, 0, packet.Size, SocketFlags.None, ep, null, null); //SocketFlags.None
         }
 
         private void EnsureSocketListen(int amount = 1, int listenCap = 20)
@@ -54,66 +84,53 @@ namespace UtiLib.Net.Discovery
                 for (var i = 0; i < checkedAmount; i++)
                 {
                     var receiveBuffer = new byte[256];
-                    _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, receiveBuffer);
+                    _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback,
+                        receiveBuffer);
                 }
 
                 Interlocked.Add(ref _intCount, checkedAmount);
             }
         }
 
-        private readonly ConcurrentDictionary<uint, bool> _receivedIps = new ConcurrentDictionary<uint, bool>();
-
         private void ReceiveCallback(IAsyncResult x)
         {
+            var currentTime = _pingStopwatch.ElapsedTicks;
+            var elapsedTime = 0;
+
             var receiveBuffer = x.AsyncState as byte[];
             if (receiveBuffer != null)
             {
                 var bytesRead = _socket.EndReceive(x);
                 var ipHeader = new IpHeader(receiveBuffer, bytesRead);
                 if (ipHeader.ProtocolType == ProtocolType.Icmp)
-                {
                     if (!_receivedIps.ContainsKey(ipHeader.RawSourceAddress))
                     {
                         _receivedIps[ipHeader.RawSourceAddress] = true;
 
                         var icParsed = new IcmpPacket(ipHeader.Data, ipHeader.MessageLength);
-                        OnResult?.Invoke(this, icParsed);
+                        if (EnableTimeMeasure)
+                        {
+                            var parsedTime = BitConverter.ToInt64(icParsed.Data, 0);
+                            elapsedTime = TimeSpan.FromTicks(currentTime - parsedTime).Milliseconds;
+                        }
+
+                        var pingReplyObject = TypeHelper.Construct<PingReply>(receiveBuffer, bytesRead,
+                            ipHeader.SourceAddress, elapsedTime);
+                        var pingCompletedArgs =
+                            TypeHelper.Construct<PingCompletedEventArgs>(pingReplyObject, new Exception(), false, this);
+
+                        OnResult?.Invoke(this, pingCompletedArgs);
                     }
-                }
             }
 
             if (receiveBuffer != null)
-                _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, receiveBuffer);
+                _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback,
+                    receiveBuffer);
         }
 
-        //public int GetPingTime(string host)
-        //{
-        //    if (host == null) return -1;
-
-        //    var serverHe = Dns.GetHostEntry(host);
-        //    if (serverHe == null) return -1; // Fehler
-
-        //    // Den IPEndPoint des Servers in einen EndPoint konvertieren.
-        //    EndPoint epServer = (new IPEndPoint(serverHe.AddressList[0], 0));
-
-        //    _socket.BeginSendTo(_packet.Buf, 0, _packet.Size, SocketFlags.None, epServer, null, null);
-
-        //    // Initialisiere den Buffer. Der Empfänger-Buffer ist die Größe des
-        //    // ICMP Header plus den IP Header (20 bytes)
-        //    var receiveBuffer = new byte[256];
-        //    _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, x =>
-        //    {
-        //        var buf = x.AsyncState as byte[];
-        //        var ipP = new byte[4];
-        //        Array.Copy(buf, 12, ipP, 0, 4);
-        //        var dstip = new IPAddress(ipP);
-        //        Debugger.Break();
-        //    }, receiveBuffer);
-
-        //    //IPAddress.Parse(ReceiveBuffer);
-        //    Console.ReadLine();
-
-        //    return 0;
-        //}
+        void IPingScaner.Enqueue(IEnumerable<IPAddress> addresses)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -45,8 +45,9 @@ namespace UtiLib.Net.Headers
             }
         }
 
-        public IcmpPacket()
+        public IcmpPacket(byte[] data = null)
         {
+            Data = data;
             Reset();
         }
 
@@ -131,8 +132,14 @@ namespace UtiLib.Net.Headers
             Identifier = 45;
             SequenceNumber = 500;
             PingData = 32;
-
-            Data = new byte[PingData].Propagate((byte)'#');
+            if (Data == null)
+            {
+                Data = new byte[PingData].Propagate((byte)'#');
+            }
+            else
+            {
+                PingData = Data.Length;
+            }
         }
 
         private static void WriteArray(Array sourceArray, Array destinationArray, ref int index, int? length = default)

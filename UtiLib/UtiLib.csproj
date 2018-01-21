@@ -51,9 +51,12 @@
     <Compile Include="Delegates\FuncConvert.cs" />
     <Compile Include="Environment\OperatingSystemDedection.cs" />
     <Compile Include="Environment\WindowsUser.cs" />
+    <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Net\Discovery\IPingScanmer.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
+    <Compile Include="Net\Discovery\PingScan.cs" />
     <Compile Include="Net\Discovery\RawPingDiscovery.cs" />
     <Compile Include="Net\Headers\DnsHeader.cs" />
     <Compile Include="Net\Headers\IcmpPacket.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="Net\Headers\UdpHeader.cs" />
     <Compile Include="Net\Sniffing\RawSniffer.cs" />
     <Compile Include="Net\Sniffing\SniffingPacket.cs" />
+    <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Shared\Enums\EnvironmentDefinition.cs" />
     <Compile Include="Extensions\AsyncEnumerableExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
