@@ -197,5 +197,10 @@ namespace UtiLib.Net.Headers
             cksum += (cksum >> 16);
             return (ushort)(~cksum);
         }
+
+        public static DynamicArray<byte> GenerateNew(byte[] data = null)
+        {
+            return new IcmpPacket(data).GeneratePayload();
+        }
     }
 }
