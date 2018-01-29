@@ -14,7 +14,7 @@ using UtiLib.Shared.Generic;
 
 namespace UtiLib.Net.Discovery
 {
-    public class RawPingNew : PingBase
+    public class RawPing : PingBase
     {
         private readonly Stopwatch _pingStopwatch;
         private readonly DynamicArray<byte> _payloadData;
@@ -22,12 +22,22 @@ namespace UtiLib.Net.Discovery
 
         private Socket _socket;
 
-        public RawPingNew() : base()
+        public RawPing() : base()
         {
             _pingStopwatch = Stopwatch.StartNew();
             _payloadData = IcmpPacket.GenerateNew();
         }
 
+        ~RawPing()
+        {
+            Dispose();
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        ///     Starts the ping process.
+        ///     Enqueueing new ip addresses for ping is disabled during scantime
+        /// </summary>
         public override void Start()
         {
             base.Start();
@@ -102,7 +112,11 @@ namespace UtiLib.Net.Discovery
 
         public override void Dispose()
         {
-            _socket?.Dispose();
+            if (!_disposed)
+            {
+                _socket?.Dispose();
+                base.Dispose();
+            }
         }
     }
 }

@@ -57,6 +57,10 @@ namespace UtiLib.Net.Discovery
             AddressCollectionQueue.Enqueue(addresses);
         }
 
+        /// <summary>
+        ///     Starts the ping process.
+        ///     Enqueueing new ip addresses for ping is disabled during scantime
+        /// </summary>
         public virtual void Start()
         {
             AddressCollectionQueue.Enqueue(AddressQueue);
@@ -64,8 +68,11 @@ namespace UtiLib.Net.Discovery
             Running = true;
         }
 
+        protected bool _disposed;
+
         public virtual void Dispose()
         {
+            _disposed = true;
         }
     }
 }

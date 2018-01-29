@@ -8,10 +8,10 @@ namespace UtiLib.ConsoleTests
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine($"Starting {nameof(PingTestsNew.RawPingExample)}");
-            PingTestsNew.RawPingExample();
-            Console.WriteLine($"Starting {nameof(PingTestsNew.PingExample)}");
-            PingTestsNew.PingExample();
+            Console.WriteLine($"Starting {nameof(PingTests.RawPingExample)}");
+            PingTests.RawPingExample();
+            Console.WriteLine($"Starting {nameof(PingTests.PingExample)}");
+            PingTests.PingExample();
 
             Console.ReadLine();
             DelegatePlayground.CreateDelegate();

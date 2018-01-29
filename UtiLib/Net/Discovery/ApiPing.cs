@@ -5,7 +5,12 @@ using System.Net.NetworkInformation;
 
 namespace UtiLib.Net.Discovery
 {
-    public class ApiPingNew : PingBase
+    /// <summary>
+    ///     Pings based on <see cref="Ping" /> objects.
+    ///     Warning: Aborting an active massping may result in a Bluescreen.
+    ///     You may concider using <see cref="RawPing" /> for this purpose
+    /// </summary>
+    public class ApiPing : PingBase
     {
         private readonly object _lockObject = new object();
 
@@ -13,19 +18,31 @@ namespace UtiLib.Net.Discovery
         private IEnumerator<IPAddress> _currentEnumerator;
         private int _runningPingScanners;
 
+        public ApiPing()
+        {
+            _pingOptions = new PingOptions(128, true);
+        }
+
         /// <summary>
         ///     Will be called when each ping has been completed
         /// </summary>
         public EventHandler OnPingFinished { get; set; }
 
-        public ApiPingNew()
-        {
-            _pingOptions = new PingOptions(128, true);
-        }
-
+        /// <summary>
+        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.
+        /// </summary>
         public TimeSpan TimeOut { get; set; } = TimeSpan.MaxValue;
+
+        /// <summary>
+        ///     An Int32 value that specifies the maximum number of concurrent active scans
+        /// </summary>
         public int MaxConcurrentScans { get; set; } = 50;
 
+        /// <inheritdoc />
+        /// <summary>
+        ///     Starts the ping process.
+        ///     Enqueueing new ip addresses for ping is disabled during scantime
+        /// </summary>
         public override void Start()
         {
             base.Start();
@@ -47,23 +64,17 @@ namespace UtiLib.Net.Discovery
 
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
-            if (!e.Reply.Address.Equals(default(IPAddress))) //Happens some times that the ip is 0 // && (e.Reply.Status == IPStatus.Success)
-            {
+            if (!e.Reply.Address.Equals(default(IPAddress))
+            ) //Happens some times that the ip is 0 // && (e.Reply.Status == IPStatus.Success)
                 OnResult?.Invoke(this, e);
-            }
             else
-            {
                 Logger.Log($"Invalid pingreply from pingObject");
-            }
 
             var nextScanAddress = GetNext();
             if (nextScanAddress != null)
-            {
-                ((Ping)sender).SendAsync(nextScanAddress, (int)TimeOut.TotalMilliseconds, new byte[32].Propagate((byte)'#'), _pingOptions);
-            }
+                ((Ping)sender).SendAsync(nextScanAddress, (int)TimeOut.TotalMilliseconds,
+                    new byte[32].Propagate((byte)'#'), _pingOptions);
             else
-            {
-                //TODO
                 lock (_lockObject)
                 {
                     _runningPingScanners--;
@@ -73,7 +84,6 @@ namespace UtiLib.Net.Discovery
                     if (pingCompleted)
                         OnPingFinished?.Invoke(this, new EventArgs());
                 }
-            }
         }
 
         private IPAddress GetNext()
@@ -88,6 +98,7 @@ namespace UtiLib.Net.Discovery
                     _currentEnumerator = retVar.GetEnumerator();
                     return GetNext();
                 }
+
                 return null;
             }
         }

@@ -55,13 +55,10 @@
     <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Net\Discovery\ApiPingNew.cs" />
-    <Compile Include="Net\Discovery\Old\IPingScaner.cs" />
+    <Compile Include="Net\Discovery\ApiPing.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
-    <Compile Include="Net\Discovery\Old\PingScan.cs" />
-    <Compile Include="Net\Discovery\Old\RawPingDiscovery.cs" />
     <Compile Include="Net\Discovery\PingBase.cs" />
-    <Compile Include="Net\Discovery\RawPingNew.cs" />
+    <Compile Include="Net\Discovery\RawPing.cs" />
     <Compile Include="Net\Headers\DnsHeader.cs" />
     <Compile Include="Net\Headers\IcmpPacket.cs" />
     <Compile Include="Net\Headers\IpHeader.cs" />
