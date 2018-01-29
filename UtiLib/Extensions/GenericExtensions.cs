@@ -28,6 +28,13 @@ namespace System
             return default(TX);
         }
 
+        /// <summary>
+        /// Fills up the given array with <see cref="value"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dArray"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static T[] Propagate<T>(this T[] dArray, T value)
         {
             for (int i = 0; i < dArray.Length; i++)

@@ -8,7 +8,7 @@ using UtiLib.Shared.Enums;
 
 namespace UtiLib.ConsoleTests.Tests
 {
-    internal class PingTests
+    internal class PingTestsOld
     {
         public static void PingExample()
         {
@@ -29,10 +29,27 @@ namespace UtiLib.ConsoleTests.Tests
             // mp.Enqueue("10.0.0.138".AsIpAddress());
             Console.ReadLine();
         }
+    }
 
-        //private static void OnMpOnResult(object _, IcmpPacket packet)
-        //{
-        //    Settings.Logger.Log($"{packet.IpHeader.SourceAddress}: {packet.IpStatus}", LogSeverity.Information);
-        //}
+    internal class PingTestsNew
+    {
+        public static void PingExample()
+        {
+            var ps = new ApiPingNew { TimeOut = TimeSpan.FromSeconds(2) };
+            ps.OnResult += (sender, address) => Logger.Log(address);
+            ps.OnPingFinished += (sender, eventArgs) => Logger.Log("PingScan Finished");
+            ps.Enqueue(NetMaskGenerator.GetAllIp());
+            Console.ReadLine();
+        }
+
+        public static void RawPingExample()
+        {
+            var mp = new RawPingNew();
+            mp.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
+
+            mp.Enqueue(NetMaskGenerator.GetAllIp());
+            mp.Start();
+            Console.ReadLine();
+        }
     }
 }

@@ -55,6 +55,7 @@
     <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Net\Discovery\ApiPingNew.cs" />
     <Compile Include="Net\Discovery\Old\IPingScaner.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
     <Compile Include="Net\Discovery\Old\PingScan.cs" />

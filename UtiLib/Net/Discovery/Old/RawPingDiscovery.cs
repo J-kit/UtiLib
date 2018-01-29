@@ -88,8 +88,7 @@ namespace UtiLib.Net.Discovery
                 for (var i = 0; i < checkedAmount; i++)
                 {
                     var receiveBuffer = new byte[256];
-                    _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback,
-                        receiveBuffer);
+                    _socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, receiveBuffer);
                 }
 
                 Interlocked.Add(ref _intCount, checkedAmount);

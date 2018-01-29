@@ -46,7 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\DelegatePlayground.cs" />
     <Compile Include="Tests\LogTests.cs" />
-    <Compile Include="Tests\PingTests.cs" />
+    <Compile Include="Tests\PingTestsOld.cs" />
     <Compile Include="Tests\SnifferTests.cs" />
   </ItemGroup>
   <ItemGroup>
