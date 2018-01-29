@@ -110,6 +110,8 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Shared\Interfaces\IAsyncEnumerable.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Delegates\README.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

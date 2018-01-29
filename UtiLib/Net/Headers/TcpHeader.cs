@@ -36,10 +36,8 @@ namespace UtiLib.Net.Headers
                     _byHeaderLength = (byte)(_usDataOffsetAndFlags >> 12);
                     _byHeaderLength *= 4;
                     MessageLength = (ushort)(nReceived - _byHeaderLength);
-                    //Array.Copy(byBuffer, (int)_byHeaderLength, Data, 0, nReceived - (int)_byHeaderLength);
 
-                    Data = br.ReadBytes(MessageLength);
-                    //var segment = new ArraySegment<byte>(byBuffer, _byHeaderLength, nReceived);
+                    if (MessageLength > 0) Data = new ArraySegment<byte>(byBuffer, _byHeaderLength, MessageLength);
                 }
             }
             catch (Exception ex)
@@ -97,6 +95,6 @@ namespace UtiLib.Net.Headers
 
         public short Checksum { get; } = 555;
 
-        public byte[] Data { get; } //= new byte[4096];
+        public ArraySegment<byte> Data { get; }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 namespace UtiLib.Net.Discovery
 {
@@ -12,8 +13,6 @@ namespace UtiLib.Net.Discovery
     /// </summary>
     public class ApiPing : PingBase
     {
-        private readonly object _lockObject = new object();
-
         private readonly PingOptions _pingOptions;
         private IEnumerator<IPAddress> _currentEnumerator;
         private int _runningPingScanners;
@@ -22,16 +21,6 @@ namespace UtiLib.Net.Discovery
         {
             _pingOptions = new PingOptions(128, true);
         }
-
-        /// <summary>
-        ///     Will be called when each ping has been completed
-        /// </summary>
-        public EventHandler OnPingFinished { get; set; }
-
-        /// <summary>
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.
-        /// </summary>
-        public TimeSpan TimeOut { get; set; } = TimeSpan.MaxValue;
 
         /// <summary>
         ///     An Int32 value that specifies the maximum number of concurrent active scans
@@ -62,6 +51,12 @@ namespace UtiLib.Net.Discovery
             _runningPingScanners = pingLimiter;
         }
 
+        //TODO
+        public override async Task StartAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
             if (!e.Reply.Address.Equals(default(IPAddress))
@@ -75,7 +70,7 @@ namespace UtiLib.Net.Discovery
                 ((Ping)sender).SendAsync(nextScanAddress, (int)TimeOut.TotalMilliseconds,
                     new byte[32].Propagate((byte)'#'), _pingOptions);
             else
-                lock (_lockObject)
+                lock (LockObject)
                 {
                     _runningPingScanners--;
 
@@ -88,11 +83,16 @@ namespace UtiLib.Net.Discovery
 
         private IPAddress GetNext()
         {
-            lock (_lockObject)
+            lock (LockObject)
             {
-                if (_currentEnumerator.MoveNext()) return _currentEnumerator.Current;
+                if (_currentEnumerator != null)
+                {
+                    if (_currentEnumerator.MoveNext())
+                        return _currentEnumerator.Current;
 
-                _currentEnumerator.Dispose();
+                    _currentEnumerator.Dispose();
+                }
+
                 if (AddressCollectionQueue.TryDequeue(out var retVar))
                 {
                     _currentEnumerator = retVar.GetEnumerator();

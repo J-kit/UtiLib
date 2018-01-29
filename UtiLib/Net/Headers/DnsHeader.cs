@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 
 namespace UtiLib.Net.Headers
 {
     public class DnsHeader
     {
+        private const int DataPtr = 12;
+
         public ushort DestinationPort => throw new NotSupportedException("This property is not supported for this header implementation.");
 
         public ushort SourcePort => throw new NotSupportedException("This property is not supported for this header implementation.");
@@ -15,7 +18,7 @@ namespace UtiLib.Net.Headers
 
         public short Checksum => throw new NotSupportedException("This property is not supported for this header implementation.");
 
-        public byte[] Data => throw new NotSupportedException("This property is not supported for this header implementation.");
+        //  public byte[] Data => throw new NotSupportedException("This property is not supported for this header implementation.");
 
         public ushort Identification { get; private set; }
 
@@ -29,9 +32,11 @@ namespace UtiLib.Net.Headers
 
         public ushort TotalAdditionalRRs { get; private set; }
 
-        public DnsHeader(byte[] dataBuffer, int bytesReceived)
+        public ArraySegment<byte> Data { get; }
+
+        public DnsHeader(ArraySegment<byte> dataBuffer)
         {
-            using (var memoryStream = new MemoryStream(dataBuffer, 0, bytesReceived))
+            using (var memoryStream = new MemoryStream(dataBuffer.Array ?? throw new InvalidOperationException(), dataBuffer.Offset, dataBuffer.Count))
             using (var binaryReader = new BinaryReader(memoryStream))
             {
                 this.Identification = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
@@ -42,8 +47,12 @@ namespace UtiLib.Net.Headers
                 this.TotalAdditionalRRs = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
 
                 //var res = Settings.DefaultEncoding.GetString(dataBuffer, (int)memoryStream.Position, (int)(dataBuffer.Length - memoryStream.Position));
-
-                Debugger.Break();
+                var cDataPtr = dataBuffer.Offset + DataPtr;
+                var messageLength = (int)(dataBuffer.Count - cDataPtr);
+                if (messageLength > 0)
+                {
+                    Data = new ArraySegment<byte>(dataBuffer.Array, cDataPtr, messageLength);
+                }
             }
         }
     }

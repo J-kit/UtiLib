@@ -1,4 +1,6 @@
-﻿namespace UtiLib.Net.Headers
+﻿using System;
+
+namespace UtiLib.Net.Headers
 {
     public interface IProtocolHeader
     {
@@ -10,6 +12,6 @@
 
         short Checksum { get; }
 
-        byte[] Data { get; }
+        ArraySegment<byte> Data { get; }
     }
 }

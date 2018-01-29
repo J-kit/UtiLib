@@ -2,7 +2,7 @@
 using System.Linq;
 
 // ReSharper disable once CheckNamespace
-namespace System
+namespace System.Linq
 {
     public static class LinqExtensions
     {

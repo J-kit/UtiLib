@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -124,7 +125,9 @@ namespace UtiLib.Net.Sniffing
 
             if (53.MultiEqualsOr(packet.Body.SourcePort, packet.Body.DestinationPort))
             {
-                packet.DnsInfo = new DnsHeader(ipHeader.Data, (int)ipHeader.MessageLength);
+                //  packet.DnsInfo = new DnsHeader(ipHeader.Data, (int)ipHeader.MessageLength);
+
+                packet.DnsInfo = new DnsHeader(packet.Body.Data);
             }
 
             if (_pred?.Invoke(packet) ?? true)

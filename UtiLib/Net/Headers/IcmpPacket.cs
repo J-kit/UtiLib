@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.NetworkInformation;
 using UtiLib.Shared.Generic;
 
@@ -10,6 +11,8 @@ namespace UtiLib.Net.Headers
     /// </summary>
     public class IcmpPacket : IProtocolHeader
     {
+        private const int DataPtr = 8;
+
         #region IProtocolHeader Implementation
 
         ushort IProtocolHeader.DestinationPort { get; } = 0;
@@ -46,7 +49,7 @@ namespace UtiLib.Net.Headers
         /// </summary>
         public ushort SequenceNumber { get; set; }  // Sequenznummer
 
-        public byte[] Data { get; set; }            // Byte Array
+        public ArraySegment<byte> Data { get; set; }            // Byte Array
 
         public int PingData { get; set; }
 
@@ -59,7 +62,6 @@ namespace UtiLib.Net.Headers
         /// <param name="bytesReceived"></param>
         public IcmpPacket(byte[] dataBuffer, int bytesReceived)
         {
-            //  Console.WriteLine(IpHeader.ProtocolType);
             using (var ms = new MemoryStream(dataBuffer, 0, bytesReceived))
             using (var br = new BinaryReader(ms))
             {
@@ -69,7 +71,12 @@ namespace UtiLib.Net.Headers
                 CheckSum = br.ReadUInt16();
                 Identifier = br.ReadUInt16();
                 SequenceNumber = br.ReadUInt16();
-                Data = br.ReadBytes((int)(bytesReceived - ms.Position));
+
+                var messageLength = (int)(bytesReceived - DataPtr);
+                if (messageLength > 0)
+                {
+                    Data = new ArraySegment<byte>(dataBuffer, DataPtr, messageLength);
+                }
             }
         }
 
@@ -79,7 +86,7 @@ namespace UtiLib.Net.Headers
         /// <param name="data"></param>
         public IcmpPacket(byte[] data = null)
         {
-            Data = data;
+            Data = data == null ? default : new ArraySegment<byte>(data);
             Reset();
         }
 
@@ -144,7 +151,7 @@ namespace UtiLib.Net.Headers
             WriteArray(bCksum, buffer, ref index);
             WriteArray(bId, buffer, ref index);
             WriteArray(bSeq, buffer, ref index);
-            WriteArray(Data, buffer, ref index, pingData);
+            WriteArray(Data.ToArray(), buffer, ref index, pingData);
 
             if (index != packetSize) /* sizeof(IcmpPacket) */
             {
@@ -165,13 +172,13 @@ namespace UtiLib.Net.Headers
             Identifier = 45;
             SequenceNumber = 500;
             PingData = 32;
-            if (Data == null)
+            if (Data == default)
             {
-                Data = new byte[PingData].Propagate((byte)'#');
+                Data = new ArraySegment<byte>(new byte[PingData].Propagate((byte)'#'));
             }
             else
             {
-                PingData = Data.Length;
+                PingData = Data.Count;
             }
         }
 

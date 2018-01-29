@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading.Tasks;
 using UtiLib.Exceptions;
 
@@ -12,11 +10,21 @@ namespace UtiLib.Net.Discovery
 {
     public abstract class PingBase : IDisposable
     {
+        protected readonly object LockObject = new object();
+
+        protected bool _disposed;
+        private bool _measureTime;
+
         protected ConcurrentQueue<IEnumerable<IPAddress>> AddressCollectionQueue;
         protected Queue<IPAddress> AddressQueue;
 
-        protected bool Running = false;
-        private bool _measureTime;
+        protected bool Running;
+
+        protected PingBase()
+        {
+            AddressQueue = new Queue<IPAddress>();
+            AddressCollectionQueue = new ConcurrentQueue<IEnumerable<IPAddress>>();
+        }
 
         public bool MeasureTime
         {
@@ -24,21 +32,32 @@ namespace UtiLib.Net.Discovery
             set
             {
                 if (Running)
-                    throw new InProgressException($"The property {nameof(MeasureTime)} cannot be changed as the ping is in progress");
+                    throw new InProgressException(
+                        $"The property {nameof(MeasureTime)} cannot be changed as the ping is in progress");
 
                 _measureTime = value;
             }
         }
 
         /// <summary>
+        ///     Will be called when each ping has been completed
+        /// </summary>
+        public EventHandler OnPingFinished { get; set; }
+
+        /// <summary>
         ///     Will be called when a ping response is received
         /// </summary>
         public EventHandler<PingCompletedEventArgs> OnResult { get; set; }
 
-        protected PingBase()
+        /// <summary>
+        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the
+        ///     ICMP echo reply message.
+        /// </summary>
+        public TimeSpan TimeOut { get; set; } = TimeSpan.FromSeconds(60);
+
+        public virtual void Dispose()
         {
-            AddressQueue = new Queue<IPAddress>();
-            AddressCollectionQueue = new ConcurrentQueue<IEnumerable<IPAddress>>();
+            _disposed = true;
         }
 
         public virtual void Enqueue(IPAddress address)
@@ -68,11 +87,6 @@ namespace UtiLib.Net.Discovery
             Running = true;
         }
 
-        protected bool _disposed;
-
-        public virtual void Dispose()
-        {
-            _disposed = true;
-        }
+        public abstract Task StartAsync();
     }
 }

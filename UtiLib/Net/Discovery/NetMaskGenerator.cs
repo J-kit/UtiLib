@@ -15,16 +15,16 @@ namespace UtiLib.Net.Discovery
         public IPAddress Address { get; set; }
     }
 
-    public class NetMaskGenerator
+    public class NetMaskHelper
     {
         //+		IPv4Mask	{255.255.255.0}	System.Net.IPAddress
         //+		Address	    {10.0.0.6}	System.Net.IPAddress
 
         /// <summary>
-        /// Get all IPAdresses which are in the current subnet
+        /// Returns all Addresses of all Adapters' subnets
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<IPAddress> GetAllIp()
+        public static IEnumerable<IPAddress> RetrieveSubnetAddresses()
         {
             //Gather all networkinterface information required
             var interfaceInfos = NetworkInterface.GetAllNetworkInterfaces()
