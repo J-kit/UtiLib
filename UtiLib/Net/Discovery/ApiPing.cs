@@ -51,12 +51,6 @@ namespace UtiLib.Net.Discovery
             _runningPingScanners = pingLimiter;
         }
 
-        //TODO
-        public override async Task StartAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
             if (!e.Reply.Address.Equals(default(IPAddress))

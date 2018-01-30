@@ -10,25 +10,36 @@ namespace UtiLib.Net.Discovery
         /// Returns Ping discovery engine based on the current users' permissons
         /// </summary>
         /// <returns></returns>
-        public static PingBase CreatePingEngine(PingEngineCreationFlags flags = PingEngineCreationFlags.Default)
+        public static PingBase CreatePingEngine(PingEngineFlags flags = PingEngineFlags.Default)
         {
-            var rObject = WindowsUser.IsElevated ? new RawPing() : (PingBase)new ApiPing();
-            rObject.MeasureTime = flags.HasFlag(PingEngineCreationFlags.MeasureTime);
+            return (WindowsUser.IsElevated ? new RawPing() : (PingBase)new ApiPing()).Prepare(flags);
+        }
 
-            if (flags.HasFlag(PingEngineCreationFlags.Subnet))
+        public static T Prepare<T>(this T input, PingEngineFlags flags) where T : PingBase
+        {
+            input.MeasureTime = flags.HasFlag(PingEngineFlags.MeasureTime);
+
+            if (flags.HasFlag(PingEngineFlags.Subnet))
             {
-                rObject.Enqueue(NetMaskHelper.RetrieveSubnetAddresses());
+                input.Enqueue(NetMaskHelper.RetrieveSubnetAddresses());
             }
-
-            return rObject;
+            return input;
         }
     }
 
     [Flags]
-    public enum PingEngineCreationFlags
+    public enum PingEngineFlags
     {
         Default = 1,
+
+        /// <summary>
+        /// Scans subnet addresses of all interfaces
+        /// </summary>
         Subnet = 2,
+
+        /// <summary>
+        /// Enable Time measurement
+        /// </summary>
         MeasureTime = 4
     }
 }

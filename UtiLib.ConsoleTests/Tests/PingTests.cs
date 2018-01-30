@@ -9,8 +9,10 @@ namespace UtiLib.ConsoleTests.Tests
     {
         public static void SafePing()
         {
-            var discoverer = NetDiscovery.CreatePingEngine(PingEngineCreationFlags.MeasureTime | PingEngineCreationFlags.Subnet);
-            discoverer.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
+            var discoverer =
+                NetDiscovery.CreatePingEngine(PingEngineFlags.MeasureTime | PingEngineFlags.Subnet);
+            discoverer.OnResult += (_, x) =>
+                Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
             discoverer.OnPingFinished += (_, __) => Logger.Log("Discovery Finished");
             discoverer.TimeOut = TimeSpan.FromSeconds(5);
             discoverer.Start();
@@ -19,21 +21,18 @@ namespace UtiLib.ConsoleTests.Tests
 
         public static void PingExample()
         {
-            var ps = new ApiPing { TimeOut = TimeSpan.FromSeconds(2) };
+            var ps = new ApiPing { TimeOut = TimeSpan.FromSeconds(2) }.Prepare(PingEngineFlags.Subnet);
             ps.OnResult += (sender, address) => Logger.Log(address);
             ps.OnPingFinished += (sender, eventArgs) => Logger.Log("PingScan Finished");
-            ps.Enqueue(NetMaskHelper.RetrieveSubnetAddresses());
             ps.Start();
             Console.ReadLine();
         }
 
         public static void RawPingExample()
         {
-            using (var mp = new RawPing())
+            using (var mp = new RawPing().Prepare(PingEngineFlags.Subnet))
             {
                 mp.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
-
-                mp.Enqueue(NetMaskHelper.RetrieveSubnetAddresses());
                 mp.Start();
                 Console.ReadLine();
             }
@@ -41,13 +40,13 @@ namespace UtiLib.ConsoleTests.Tests
 
         public static async Task RawPingAsync()
         {
-            using (var mp = new RawPing())
+            using (var mp = new RawPing().Prepare(PingEngineFlags.MeasureTime | PingEngineFlags.Subnet))
             {
-                mp.Prepare(PingEngineCreationFlags.MeasureTime | PingEngineCreationFlags.Subnet);
                 mp.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
 
                 await mp.StartAsync();
             }
+
             Logger.Log("RawPing Finished");
             Console.ReadLine();
         }

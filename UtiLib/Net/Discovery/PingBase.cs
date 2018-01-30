@@ -110,15 +110,5 @@ namespace UtiLib.Net.Discovery
 
             return await tcs.Task;
         }
-
-        public void Prepare(PingEngineCreationFlags flags = PingEngineCreationFlags.Default)
-        {
-            MeasureTime = flags.HasFlag(PingEngineCreationFlags.MeasureTime);
-
-            if (flags.HasFlag(PingEngineCreationFlags.Subnet))
-            {
-                Enqueue(NetMaskHelper.RetrieveSubnetAddresses());
-            }
-        }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="Exceptions\InProgressException.cs" />
     <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
+    <Compile Include="IO\Translate\Translator.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Net\Discovery\ApiPing.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
