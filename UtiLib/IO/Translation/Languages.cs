@@ -1,6 +1,6 @@
-﻿namespace UtiLib.IO.Translate
+﻿namespace UtiLib.IO.Translation
 {
-    public enum Languages
+    public enum Language
     {
         Automatic,
         Afrikaans,

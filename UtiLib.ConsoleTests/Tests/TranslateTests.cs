@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using UtiLib.IO.Translate;
+using UtiLib.IO.Translation;
 
 namespace UtiLib.ConsoleTests.Tests
 {
@@ -8,7 +8,7 @@ namespace UtiLib.ConsoleTests.Tests
         public static void Translate()
         {
             //  var trans = new Translator
-            var res = Translator.Translate("Hello World!", "auto", "de");
+            var res = Translator.Translate("Hello World!", TranslationContext.Create(Language.Automatic, Language.German));
             Debugger.Break();
         }
     }

@@ -54,8 +54,12 @@
     <Compile Include="Exceptions\InProgressException.cs" />
     <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
-    <Compile Include="IO\Translate\Languages.cs" />
-    <Compile Include="IO\Translate\Translator.cs" />
+    <Compile Include="IO\Translation\LanguageExtensions.cs" />
+    <Compile Include="IO\Translation\Languages.cs" />
+    <Compile Include="IO\Translation\SharedPreferences.cs" />
+    <Compile Include="IO\Translation\TranslationContext.cs" />
+    <Compile Include="IO\Translation\Translator.cs" />
+    <Compile Include="IO\Translation\TranslatorResult.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Net\Discovery\ApiPing.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
