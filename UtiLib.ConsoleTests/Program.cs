@@ -14,14 +14,15 @@ namespace UtiLib.ConsoleTests
 
             //Console.WriteLine($"Starting {nameof(PingTests.RawPingExample)}");
             //PingTests.RawPingExample();
-            Console.WriteLine($"Starting {nameof(PingTests.RawPingAsync)}");
-            await PingTests.RawPingAsync();
+            //   Console.WriteLine($"Starting {nameof(PingTests.RawPingAsync)}");
+            //await PingTests.RawPingAsync();
 
             //Console.WriteLine($"Starting {nameof(PingTests.PingExample)}");
             //PingTests.PingExample();
 
             //SnifferTests.SnifferExamples();
 
+            TranslateTests.Translate();
             Console.ReadLine();
             DelegatePlayground.CreateDelegate();
             LogTests.DoTest();

@@ -50,6 +50,7 @@
     <Compile Include="Tests\LogTests.cs" />
     <Compile Include="Tests\PingTests.cs" />
     <Compile Include="Tests\SnifferTests.cs" />
+    <Compile Include="Tests\TranslateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
