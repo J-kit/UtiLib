@@ -59,12 +59,6 @@ namespace UtiLib.Net.Discovery
                 _timeoutTimer = new Timer(PingTimeoutCheckerCallback, this, TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.5));
         }
 
-        //TODO
-        public override async Task StartAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         private void PingTimeoutCheckerCallback(object state)
         {
             lock (LockObject)

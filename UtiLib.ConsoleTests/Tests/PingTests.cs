@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UtiLib.Net.Discovery;
 using UtiLib.Shared.Enums;
 
@@ -36,6 +37,19 @@ namespace UtiLib.ConsoleTests.Tests
                 mp.Start();
                 Console.ReadLine();
             }
+        }
+
+        public static async Task RawPingAsync()
+        {
+            using (var mp = new RawPing())
+            {
+                mp.Prepare(PingEngineCreationFlags.MeasureTime | PingEngineCreationFlags.Subnet);
+                mp.OnResult += (_, x) => Logger.Log($"{x.Reply.Address}: {x.Reply.Status}", LogSeverity.Information);
+
+                await mp.StartAsync();
+            }
+            Logger.Log("RawPing Finished");
+            Console.ReadLine();
         }
     }
 }

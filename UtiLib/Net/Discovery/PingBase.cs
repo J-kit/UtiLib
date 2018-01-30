@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
@@ -87,6 +88,37 @@ namespace UtiLib.Net.Discovery
             Running = true;
         }
 
-        public abstract Task StartAsync();
+        /// <summary>
+        /// Starts and waits for the last ping response/timeout
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task<IReadOnlyCollection<IPAddress>> StartAsync()
+        {
+            var lockObj = new object();
+            var ipHs = new HashSet<IPAddress>();
+
+            var tcs = new TaskCompletionSource<IReadOnlyCollection<IPAddress>>();
+            OnPingFinished += (_, __) => tcs.SetResult(ipHs);
+            OnResult += (_, args) =>
+            {
+                lock (lockObj)
+                {
+                    ipHs.Add(args.Reply.Address);
+                }
+            };
+            Start();
+
+            return await tcs.Task;
+        }
+
+        public void Prepare(PingEngineCreationFlags flags = PingEngineCreationFlags.Default)
+        {
+            MeasureTime = flags.HasFlag(PingEngineCreationFlags.MeasureTime);
+
+            if (flags.HasFlag(PingEngineCreationFlags.Subnet))
+            {
+                Enqueue(NetMaskHelper.RetrieveSubnetAddresses());
+            }
+        }
     }
 }
