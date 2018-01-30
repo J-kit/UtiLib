@@ -86,7 +86,7 @@ namespace UtiLib.IO.Translation
             }
         }
 
-        private async Task<string> DownloadStringTaskAsync(string url)
+        private static async Task<string> DownloadStringTaskAsync(string url)
         {
             using (var wc = new WebClient().PrepareClient())
             {
@@ -106,14 +106,30 @@ namespace UtiLib.IO.Translation
         /// <returns>The translation.</returns>
         public static TranslatorResult Translate(string sourceText, TranslationContext context)
         {
-            var realSourceLang = context.SourceLanguage.ToShortForm();
-            var realTargetLang = context.DestinationLanguage.ToShortForm();
+            var url = GenerateTranslateUrl(sourceText, context);
+            var serverResponse = DownloadString(url);
 
-            // Download translation
-            var text = DownloadString($"https://translate.googleapis.com/translate_a/single?client=gtx&sl={realSourceLang}&tl={realTargetLang}&dt=t&q={HttpUtility.UrlEncode(sourceText)}");
+            return ParseResult(serverResponse, context);
+        }
 
-            var index = text.IndexOf($",,\"{realTargetLang}\"", StringComparison.Ordinal);
-            var translationResult = index == -1 ? TranslateWords(text) : TranslatePhrases(index, text);
+        /// <summary>
+        ///     Translates the specified source text.
+        /// </summary>
+        /// <param name="sourceText">The source text.</param>
+        /// <param name="context"></param>
+        /// <returns>The translation.</returns>
+        public static async Task<TranslatorResult> TranslateAsync(string sourceText, TranslationContext context)
+        {
+            var url = GenerateTranslateUrl(sourceText, context);
+            var serverResponse = await DownloadStringTaskAsync(url);
+
+            return ParseResult(serverResponse, context);
+        }
+
+        private static TranslatorResult ParseResult(string serverResponse, TranslationContext context)
+        {
+            var index = serverResponse.IndexOf($",,\"{context.TargetShort}\"", StringComparison.Ordinal);
+            var translationResult = index == -1 ? TranslateWords(serverResponse) : TranslatePhrases(index, serverResponse);
 
             // Fix up translation
             translationResult = translationResult.Trim()
@@ -121,6 +137,11 @@ namespace UtiLib.IO.Translation
                 .Replace(" ,", ",").Replace(" ;", ";");
 
             return new TranslatorResult(context, translationResult);
+        }
+
+        private static string GenerateTranslateUrl(string sourceText, TranslationContext context)
+        {
+            return $"https://translate.googleapis.com/translate_a/single?client=gtx&sl={context.SourceShort}&tl={context.TargetShort}&dt=t&q={HttpUtility.UrlEncode(sourceText)}";
         }
 
         #endregion Public methods
