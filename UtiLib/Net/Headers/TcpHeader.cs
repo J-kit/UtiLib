@@ -27,6 +27,7 @@ namespace UtiLib.Net.Headers
                 {
                     SourcePort = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
                     DestinationPort = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
+
                     _uiSequenceNumber = (uint)IPAddress.NetworkToHostOrder(br.ReadInt32());
                     _uiAcknowledgementNumber = (uint)IPAddress.NetworkToHostOrder(br.ReadInt32());
                     _usDataOffsetAndFlags = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());

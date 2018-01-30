@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using UtiLib.Environment;
 using UtiLib.Net.Discovery;
+using UtiLib.Net.Headers;
 using UtiLib.Net.Sniffing;
 
 namespace UtiLib.ConsoleTests.Tests
@@ -28,7 +31,7 @@ namespace UtiLib.ConsoleTests.Tests
             sniffer.OnUnknownPacketCaptured += (_, __) => Logger.Log($"Unknown packet received");
             sniffer.OnPacketCaptured += OnSnifferOnOnPacketCaptured;
 
-            //sniffer.FilteringRule = x => x.Body.SourcePort == 53 || x.Body.DestinationPort == 53;//x.Header.ProtocolType == ProtocolType.Udp;
+            sniffer.FilteringRule = x => x.Header.ProtocolType == ProtocolType.Tcp;
 
             sniffer.Start();
             Logger.Log($"Sniffing started");
@@ -44,9 +47,16 @@ namespace UtiLib.ConsoleTests.Tests
                            $"{x.Header.SourceAddress}:{x.Body.SourcePort} ===> " +
                            $"{x.Header.DestinationAddress}:{x.Body.DestinationPort}");
             }
-            else
+
+            if (x.Body is TcpHeader th)
             {
-                // Debugger.Break();
+                Logger.Log($"[{th.Flags}] " +
+                           $"{x.Header.SourceAddress}:{x.Body.SourcePort} ===> " +
+                           $"{x.Header.DestinationAddress}:{x.Body.DestinationPort}");
+                if (th.Flags.MultiEqualsOr(TcpFlags.Syn, TcpFlags.Ack))
+                {
+                    Debugger.Break();
+                }
             }
         }
     }

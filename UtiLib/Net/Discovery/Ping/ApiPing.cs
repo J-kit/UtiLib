@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Threading.Tasks;
 
-namespace UtiLib.Net.Discovery
+namespace UtiLib.Net.Discovery.Ping
 {
     /// <summary>
     ///     Pings based on <see cref="Ping" /> objects.
@@ -41,7 +40,7 @@ namespace UtiLib.Net.Discovery
 
             while (pingLimiter <= MaxConcurrentScans && (lastResult = GetNext()) != null)
             {
-                var pingSender = new Ping();
+                var pingSender = new System.Net.NetworkInformation.Ping();
                 pingSender.PingCompleted += PingCompletedCallback;
                 pingSender.SendAsync(lastResult, (int)TimeOut.TotalMilliseconds, new byte[32].Propagate((byte)'#'), _pingOptions);
 
@@ -53,15 +52,14 @@ namespace UtiLib.Net.Discovery
 
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
-            if (!e.Reply.Address.Equals(default(IPAddress))
-            ) //Happens some times that the ip is 0 // && (e.Reply.Status == IPStatus.Success)
+            if (!e.Reply.Address.Equals(default(IPAddress))) //Happens some times that the ip is 0 // && (e.Reply.Status == IPStatus.Success)
                 OnResult?.Invoke(this, e);
             else
                 Logger.Log($"Invalid pingreply from pingObject");
 
             var nextScanAddress = GetNext();
             if (nextScanAddress != null)
-                ((Ping)sender).SendAsync(nextScanAddress, (int)TimeOut.TotalMilliseconds,
+                ((System.Net.NetworkInformation.Ping)sender).SendAsync(nextScanAddress, (int)TimeOut.TotalMilliseconds,
                     new byte[32].Propagate((byte)'#'), _pingOptions);
             else
                 lock (LockObject)

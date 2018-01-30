@@ -1,5 +1,6 @@
 ﻿using System;
 using UtiLib.Environment;
+using UtiLib.Net.Discovery.Ping;
 using UtiLib.Net.Headers;
 
 namespace UtiLib.Net.Discovery

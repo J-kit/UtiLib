@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UtiLib.Exceptions;
 
-namespace UtiLib.Net.Discovery
+namespace UtiLib.Net.Discovery.Ping
 {
     public abstract class PingBase : IDisposable
     {
         protected readonly object LockObject = new object();
 
-        protected bool _disposed;
+        protected bool Disposed;
         private bool _measureTime;
 
         protected ConcurrentQueue<IEnumerable<IPAddress>> AddressCollectionQueue;
@@ -58,7 +57,7 @@ namespace UtiLib.Net.Discovery
 
         public virtual void Dispose()
         {
-            _disposed = true;
+            Disposed = true;
         }
 
         public virtual void Enqueue(IPAddress address)

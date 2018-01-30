@@ -6,12 +6,11 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using UtiLib.Net.Headers;
 using UtiLib.Reflection;
 using UtiLib.Shared.Generic;
 
-namespace UtiLib.Net.Discovery
+namespace UtiLib.Net.Discovery.Ping
 {
     public class RawPing : PingBase
     {
@@ -86,7 +85,7 @@ namespace UtiLib.Net.Discovery
                 packet = _payloadData;
             }
 
-            _socket.BeginSendTo(packet.Value, 0, packet.Size, SocketFlags.None, ep, null, null); //SocketFlags.None
+            _socket.BeginSendTo(packet.Value, 0, packet.Size, SocketFlags.None, ep, null, null);
         }
 
         private void StartListen(int count)
@@ -144,7 +143,7 @@ namespace UtiLib.Net.Discovery
         {
             lock (LockObject)
             {
-                if (!_disposed)
+                if (!Disposed)
                 {
                     _socket?.Dispose();
                     _timeoutTimer.Dispose();

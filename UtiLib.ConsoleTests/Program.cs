@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UtiLib.ConsoleTests.Tests;
 using UtiLib.Net.Discovery;
+using UtiLib.Net.Discovery.Tcp;
 
 namespace UtiLib.ConsoleTests
 {
     internal class Program
     {
-        private static async Task Main(string[] args)
+        private static void Main(string[] args)
         {
+            PingTests.CombinedScanTest();
             // Console.WriteLine($"Starting {nameof(PingTests.SafePing)}");
             // PingTests.SafePing();
 
@@ -20,9 +26,11 @@ namespace UtiLib.ConsoleTests
             //Console.WriteLine($"Starting {nameof(PingTests.PingExample)}");
             //PingTests.PingExample();
 
-            //SnifferTests.SnifferExamples();
+            //62.47.95.239
+            Console.ReadLine();
+            SnifferTests.SnifferExamples();
 
-            TranslateTests.Translate();
+            // await TranslateTests.Translate();
             Console.ReadLine();
             DelegatePlayground.CreateDelegate();
             LogTests.DoTest();

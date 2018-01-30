@@ -6,10 +6,9 @@ namespace System
 {
     public static class NetExtensions
     {
-        public static IPEndPoint AsIpEndPoint(this string address)
+        public static IPEndPoint AsIpEndPoint(this string address, int? port = null)
         {
             var ipFormat = IPAddress.None;
-            int port = default;
 
             var ipport = address.Split(':');
 
@@ -18,12 +17,12 @@ namespace System
                 ipFormat = ipport[0].AsIpAddress();
             }
 
-            if (ipport.Length >= 2)
+            if (port == null && ipport.Length >= 2)
             {
                 port = Convert.ToInt32(ipport[1]);
             }
 
-            return new IPEndPoint(ipFormat, port);
+            return new IPEndPoint(ipFormat, port ?? default);
         }
 
         public static IPAddress AsIpAddress(this string address)

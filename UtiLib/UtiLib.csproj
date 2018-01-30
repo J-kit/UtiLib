@@ -54,6 +54,8 @@
     <Compile Include="Exceptions\InProgressException.cs" />
     <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
+    <Compile Include="Extensions\TupleExtensions.cs" />
+    <Compile Include="IO\AsyncAutoResetEvent.cs" />
     <Compile Include="IO\Translation\LanguageExtensions.cs" />
     <Compile Include="IO\Translation\Languages.cs" />
     <Compile Include="IO\Translation\SharedPreferences.cs" />
@@ -61,10 +63,11 @@
     <Compile Include="IO\Translation\Translator.cs" />
     <Compile Include="IO\Translation\TranslatorResult.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Net\Discovery\ApiPing.cs" />
+    <Compile Include="Net\Discovery\Ping\ApiPing.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
-    <Compile Include="Net\Discovery\PingBase.cs" />
-    <Compile Include="Net\Discovery\RawPing.cs" />
+    <Compile Include="Net\Discovery\Ping\PingBase.cs" />
+    <Compile Include="Net\Discovery\Ping\RawPing.cs" />
+    <Compile Include="Net\Discovery\Tcp\RawTcpScan.cs" />
     <Compile Include="Net\Headers\DnsHeader.cs" />
     <Compile Include="Net\Headers\IcmpPacket.cs" />
     <Compile Include="Net\Headers\IpHeader.cs" />
@@ -119,5 +122,6 @@
   <ItemGroup>
     <None Include="Delegates\README.md" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
