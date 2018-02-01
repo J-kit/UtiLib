@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,14 +49,17 @@
     <Compile Include="ConsolEx.cs" />
     <Compile Include="Delegates\ActionConvert.cs" />
     <Compile Include="Delegates\DelegateConverter.cs" />
+    <Compile Include="Delegates\ExtendedMethodInfo.cs" />
     <Compile Include="Delegates\FuncConvert.cs" />
     <Compile Include="Environment\OperatingSystemDedection.cs" />
     <Compile Include="Environment\WindowsUser.cs" />
     <Compile Include="Exceptions\InProgressException.cs" />
     <Compile Include="Extensions\ByteExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
     <Compile Include="Extensions\TupleExtensions.cs" />
     <Compile Include="IO\AsyncAutoResetEvent.cs" />
+    <Compile Include="IO\ForceImplement.cs" />
     <Compile Include="IO\Translation\LanguageExtensions.cs" />
     <Compile Include="IO\Translation\Languages.cs" />
     <Compile Include="IO\Translation\SharedPreferences.cs" />

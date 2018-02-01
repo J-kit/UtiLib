@@ -36,6 +36,11 @@ namespace System
             return string.Join(seperator, input);
         }
 
+        public static bool StartsWith(this string input, params string[] args)
+        {
+            return args.Any(input.StartsWith);
+        }
+
         /// <summary>
         /// Synonyme for string.GetString(StringEncoding.Hexadecimal);
         /// </summary>
