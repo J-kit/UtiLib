@@ -31,5 +31,25 @@ namespace System
         {
             return options.Contains(reference);
         }
+
+        /// <summary>
+        /// Returns the string representation of the bool in lower capitals
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ToLower(this bool input)
+        {
+            return input.ToString().ToLower();
+        }
+
+        /// <summary>
+        /// Returns the string representation of the bool in upper capitals
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ToUpper(this bool input)
+        {
+            return input.ToString().ToUpper();
+        }
     }
 }

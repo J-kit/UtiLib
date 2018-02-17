@@ -3,7 +3,15 @@ namespace System
 {
     public static class GenericExtensions
     {
-        public static T ExecuteOn<T>(this T input, Action<T> action, Predicate<T> condition = null)
+        /// <summary>
+        /// Allows to execute any command on any object (designed for oneliners)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="input"></param>
+        /// <param name="action"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static T Modify<T>(this T input, Action<T> action, Predicate<T> condition = null)
         {
             if (condition == null || condition.Invoke(input))
                 action(input);

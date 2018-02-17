@@ -10,6 +10,8 @@
 // You should have received a copy of the Open Software License along with this
 // program. If not, see <https://opensource.org/licenses/OSL-3.0>.
 
+using System;
+
 namespace UtiLib
 {
     /// <summary>
@@ -93,8 +95,12 @@ namespace UtiLib
 
         public static implicit operator R<T>(T result) => new R<T>(result);
 
-        public static implicit operator R<T>(string message) => new R<T>(message);
+        //  public static implicit operator R<T>(R result) => new R<T>(result);
+
+        //public static implicit operator R<T>(string message) => new R<T>(message);
 
         public override string ToString() => Message;
+
+        public static implicit operator T(R<T> v) => v.Value;
     }
 }

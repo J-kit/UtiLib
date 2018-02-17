@@ -36,5 +36,29 @@ namespace System
 
             return methodArray;
         }
+
+        /// <summary>
+        /// Gets us an unique Identifier for <see cref="T"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static ulong GetMetaDataToken<T>() => GetMetaDataToken(typeof(T));
+
+        /// <summary>
+        /// Gets us an unique Identifier for <see cref="input"/>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static ulong GetMetaDataToken(this object input) => GetMetaDataToken(input.GetType());
+
+        /// <summary>
+        /// Gets us an unique Identifier for <see cref="input"/>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static ulong GetMetaDataToken(this Type input)
+        {
+            return unchecked(((ulong)(uint)input.Module.ModuleVersionId.GetHashCode() << 32) | (ulong)(uint)input.MetadataToken);
+        }
     }
 }

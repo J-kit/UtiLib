@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 // ReSharper disable once CheckNamespace
@@ -40,6 +41,21 @@ namespace System.Linq
             return iterations;
         }
 
+        public static int ForEach<T>(this IEnumerable input, Action<T> action)
+        {
+            int iterations = 0;
+            if (input == null) return iterations;
+            foreach (var put in input)
+            {
+                if (!put.Equals(default(T)))
+                {
+                    action((T)put);
+                    iterations++;
+                }
+            }
+            return iterations;
+        }
+
         /// <summary>
         /// Swallows every exception that occurs in the foreach
         /// </summary>
@@ -75,6 +91,11 @@ namespace System.Linq
         public static TResult[] ToArray<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
             return source.Select(selector).ToArray();
+        }
+
+        public static bool If<T>(this T input, Func<T, bool> func)
+        {
+            return func(input);
         }
     }
 }

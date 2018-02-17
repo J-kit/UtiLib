@@ -16,5 +16,13 @@ namespace System
             result = dstQueue.Dequeue();
             return true;
         }
+
+        public static void EnqueueRange<T>(this Queue<T> dstQueue, IEnumerable<T> input)
+        {
+            foreach (var cPut in input)
+            {
+                dstQueue.Enqueue(cPut);
+            }
+        }
     }
 }

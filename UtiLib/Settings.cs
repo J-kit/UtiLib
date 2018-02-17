@@ -9,9 +9,21 @@ namespace UtiLib
     public class Settings
     {
         private static ILogger _logger;
+        private static ISerializer _defaultSerializer;
+        private static ISerializer _jsonSerializer;
 
-        public static ISerializer DefaultSerializer { get; set; }
-        public static ISerializer JsonSerializer { get; set; }
+        public static ISerializer DefaultSerializer
+        {
+            get => _defaultSerializer ?? JsonSerializer;
+            set => _defaultSerializer = value;
+        }
+
+        public static ISerializer JsonSerializer
+        {
+            get => _jsonSerializer ?? (_jsonSerializer = Serialisation.JsonSerializer.Instance);
+            set => _jsonSerializer = value;
+        }
+
         public static ISerializer XmlSerializer { get; set; }
         public static ISerializer BinarySerializer { get; set; }
 
@@ -29,7 +41,6 @@ namespace UtiLib
 
         static Settings()
         {
-            JsonSerializer = DefaultSerializer = new JsonSerializer();
             XmlSerializer = new XmlSerialisation();
             BinarySerializer = new BinarySerialisation();
 

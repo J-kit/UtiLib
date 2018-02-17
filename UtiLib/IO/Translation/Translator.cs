@@ -50,7 +50,7 @@ namespace UtiLib.IO.Translation
 
         private static string DownloadString(string url)
         {
-            using (var wc = new WebClient().PrepareClient())
+            using (var wc = new WebClient().Prepare())
             {
                 return wc.DownloadString(url);
             }
@@ -58,7 +58,7 @@ namespace UtiLib.IO.Translation
 
         private static async Task<string> DownloadStringTaskAsync(string url)
         {
-            using (var wc = new WebClient().PrepareClient())
+            using (var wc = new WebClient().Prepare())
             {
                 return await wc.DownloadStringTaskAsync(url);
             }

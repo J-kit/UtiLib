@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UtiLib.Shared.Interfaces;
 
 // ReSharper disable once CheckNamespace
@@ -46,6 +47,19 @@ namespace System
             }
 
             return iterations;
+        }
+
+        public static async Task<T[]> ToArrayAsync<T>(this IAsyncEnumerable<T> input)
+        {
+            return (await input.ToListAsync()).ToArray();
+        }
+
+        public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> input)
+        {
+            var tList = new List<T>();
+            await input.ForEachAsync(x => tList.Add(x));
+
+            return tList;
         }
     }
 }

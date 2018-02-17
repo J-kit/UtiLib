@@ -54,7 +54,9 @@
     <Compile Include="Environment\OperatingSystemDedection.cs" />
     <Compile Include="Environment\WindowsUser.cs" />
     <Compile Include="Exceptions\InProgressException.cs" />
+    <Compile Include="Exceptions\InvalidArgumentException.cs" />
     <Compile Include="Extensions\ByteExtensions.cs" />
+    <Compile Include="Extensions\FileInfoExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
     <Compile Include="Extensions\TupleExtensions.cs" />
@@ -67,6 +69,9 @@
     <Compile Include="IO\Translation\Translator.cs" />
     <Compile Include="IO\Translation\TranslatorResult.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Net\CookieWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Net\Discovery\Ping\ApiPing.cs" />
     <Compile Include="Net\Discovery\NetMaskGenerator.cs" />
     <Compile Include="Net\Discovery\Ping\PingBase.cs" />
@@ -80,6 +85,7 @@
     <Compile Include="Net\Headers\TcpFlags.cs" />
     <Compile Include="Net\Headers\TcpHeader.cs" />
     <Compile Include="Net\Headers\UdpHeader.cs" />
+    <Compile Include="Net\SharedMultiCookieClient.cs" />
     <Compile Include="Net\Sniffing\RawSniffer.cs" />
     <Compile Include="Net\Sniffing\SniffingPacket.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />

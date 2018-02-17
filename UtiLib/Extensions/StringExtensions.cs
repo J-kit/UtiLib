@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -157,9 +159,9 @@ namespace System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static bool IsNotNullOrEmpty(this string input)
+        public static bool IsNullOrEmpty(this string input)
         {
-            return !String.IsNullOrEmpty(input);
+            return String.IsNullOrEmpty(input);
         }
 
         /// <summary>
@@ -184,5 +186,15 @@ namespace System
 
         private static readonly Regex ValidUrlRegex = new Regex(@"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?");
         private static readonly Regex ValidMailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+
+        public static FileInfo ToFileInfo(this string fileLocation)
+        {
+            return new FileInfo(fileLocation);
+        }
+
+        public static string Concat(this IEnumerable<char> input)
+        {
+            return string.Concat(input);
+        }
     }
 }

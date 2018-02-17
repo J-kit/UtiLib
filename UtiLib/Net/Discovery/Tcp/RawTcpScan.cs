@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UtiLib.IO;
 using UtiLib.Shared.Enums;
+using UtiLib.Tuples;
 
 namespace UtiLib.Net.Discovery.Tcp
 {

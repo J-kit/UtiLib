@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 using System.Linq.Expressions;
 using System.Collections.Generic;
-
+using System.Diagnostics.Contracts;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 
@@ -22,6 +24,41 @@ namespace UtiLib.IO
 
             PrepareInterface(instance);
         }
+
+        //private static IntPtr _defaultStub = GetDefaultStub();
+        //private Object _tp;
+
+        //private void FakeInitialize(Type classToProxy, IntPtr stub, Object stubData)
+        //{
+        //    //if (!classToProxy.IsMarshalByRef && !classToProxy.IsInterface)
+        //    //{
+        //    //    throw new ArgumentException(
+        //    //        Environment.GetResourceString("Remoting_Proxy_ProxyTypeIsNotMBR"));
+        //    //}
+        //    Contract.EndContractBlock();
+
+        //    if ((IntPtr)0 == stub)
+        //    {
+        //        Contract.Assert((IntPtr)0 != _defaultStub, "Default stub not set up");
+
+        //        // The default stub checks for match of contexts defined by us
+        //        stub = _defaultStub;
+        //        // Start with a value of -1 because 0 is reserved for the default context
+        //        stubData = new IntPtr(-1);
+        //    }
+
+        //    _tp = null;
+        //    if (stubData == null)
+        //    {
+        //        throw new ArgumentNullException("stubdata");
+        //    }
+        //    _tp = RemotingServices.CreateTransparentProxy(this, classToProxy, stub, stubData);
+        //    var rp = this as IRemotingTypeInfo;// RemotingProxy;
+        //    if (rp != null)
+        //    {
+        //        _flags |= RealProxyFlags.RemotingProxy;
+        //    }
+        //}
 
         private void PrepareInterface(object instance)
         {

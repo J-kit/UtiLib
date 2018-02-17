@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -15,6 +16,13 @@ namespace UtiLib.ConsoleTests
     {
         private static void Main(string[] args)
         {
+            using (var xc = File.OpenWrite("myTcd.tcd"))
+            using (var bw = new BinaryWriter(xc))
+            {
+                bw.Write(new byte[] { 123 });
+                bw.Write(123);
+            }
+
             InterfaceForceTest.TestForceInterface();
             Console.ReadLine();
 

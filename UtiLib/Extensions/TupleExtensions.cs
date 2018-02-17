@@ -1,6 +1,10 @@
 ﻿// ReSharper disable once CheckNamespace
-namespace System
+
+using System;
+
+namespace UtiLib.Tuples
 {
+    //Stay internal until solved
     public static class TupleExtensions
     {
         public static void Deconstruct<T1, T2>(this Tuple<T1, T2> tuple, out T1 item1, out T2 item2)
