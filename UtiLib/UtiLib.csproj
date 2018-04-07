@@ -12,6 +12,10 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\RandomExtended.cs" />
     <Compile Include="ConsolEx.cs" />
     <Compile Include="Delegates\ActionConvert.cs" />
     <Compile Include="Delegates\DelegateConverter.cs" />
@@ -55,12 +60,21 @@
     <Compile Include="Environment\WindowsUser.cs" />
     <Compile Include="Exceptions\InProgressException.cs" />
     <Compile Include="Exceptions\InvalidArgumentException.cs" />
+    <Compile Include="Exceptions\InvalidTypeException.cs" />
     <Compile Include="Extensions\ByteExtensions.cs" />
     <Compile Include="Extensions\FileInfoExtensions.cs" />
+    <Compile Include="Extensions\IO\StreamExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\PrimitiveExtensions.cs" />
+    <Compile Include="Extensions\Reflection\MemberInfoExtensions.cs" />
+    <Compile Include="Extensions\Serialisation\SerialisationExtensions.cs" />
     <Compile Include="Extensions\TupleExtensions.cs" />
     <Compile Include="IO\AsyncAutoResetEvent.cs" />
+    <Compile Include="IO\clMultiStream.cs" />
+    <Compile Include="IO\Dialog\CustomFileDialog.cs" />
+    <Compile Include="IO\Dialog\DialogType.cs" />
+    <Compile Include="IO\Dialog\FileDialogFilterArgs.cs" />
+    <Compile Include="IO\Dialog\FileDialogFilterItem.cs" />
     <Compile Include="IO\ForceImplement.cs" />
     <Compile Include="IO\Translation\LanguageExtensions.cs" />
     <Compile Include="IO\Translation\Languages.cs" />

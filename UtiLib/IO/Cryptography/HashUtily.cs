@@ -55,6 +55,9 @@ namespace UtiLib.IO.Cryptography
 
                 case FileInfo ip5 when Exists(ip5):
                     return ip5.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
+
+                case Stream str:
+                    return str;
             }
 
             throw new Exception("Can't decode object");

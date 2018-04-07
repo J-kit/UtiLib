@@ -1,4 +1,6 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using System.Collections.Generic;
+
+// ReSharper disable once CheckNamespace
 namespace System
 {
     public static class GenericExtensions
@@ -60,6 +62,37 @@ namespace System
                 dArray[i] = func(i);
             }
             return dArray;
+        }
+
+        public static List<T> ToList<T>(this T[] input)
+        {
+            return new List<T>(input);
+        }
+
+        public static bool IsGenericIEnumerable(this Type oType)
+        {
+            return oType.IsGeneticTypeOf(typeof(IEnumerable<>));
+        }
+
+        public static bool IsGenericList(this Type oType)
+        {
+            return oType.IsGeneticTypeOf(typeof(List<>));
+        }
+
+        public static bool IsGeneticTypeOf(this Type oType, Type of)
+        {
+            return (oType.IsGenericType && oType.GetGenericTypeDefinition() == of);
+        }
+
+        public static bool TryGetArrayType(this Type oType, out Type typeOf)
+        {
+            if (oType.IsArray)
+            {
+                typeOf = oType.GetElementType();
+                return true;
+            }
+            typeOf = default;
+            return false;
         }
     }
 }

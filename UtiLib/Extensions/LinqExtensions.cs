@@ -97,5 +97,10 @@ namespace System.Linq
         {
             return func(input);
         }
+
+        public static bool IsOneMatch<T>(this IEnumerable<T> input, IEnumerable<T> matchlist)
+        {
+            return input.Any(matchlist.Contains);
+        }
     }
 }
