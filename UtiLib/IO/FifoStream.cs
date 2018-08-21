@@ -10,11 +10,10 @@ namespace UtiLib.IO
     [DebuggerDisplay("Length = {Length}")]
     public class FifoStream : Stream, IDisposable
     {
-        private readonly IRingbufferProvider _ringBufferProvider;
         private readonly Queue<BufferObject> _localBuffer = new Queue<BufferObject>();
-
-        private long _length;
+        private readonly IRingbufferProvider _ringBufferProvider;
         private BufferObject _lastBuffer;
+        private long _length;
 
         public FifoStream(IRingbufferProvider provider)
         {
@@ -23,17 +22,18 @@ namespace UtiLib.IO
 
         // public static int BufferSize => ConcurrentRingbuffer1.DefaultBufferSize;
 
-        public int WastedBytes => _localBuffer.Sum(m => m.Value.Length - m.High);
+        ~FifoStream()
+        {
+            Dispose();
+        }
 
         public override bool CanRead => true;
         public override bool CanSeek => false;
         public override bool CanWrite => true;
-
-        public override long Length => _length;
-
-        public override long Position { get; set; }
-
         public bool IsEmpty => _localBuffer.Count == 0;
+        public override long Length => _length;
+        public override long Position { get; set; }
+        public int WastedBytes => _localBuffer.Sum(m => m.Value.Length - m.High);
 
         public new void Dispose()
         {
@@ -82,11 +82,32 @@ namespace UtiLib.IO
                     dStream._length += readBytes;
                     dStream._localBuffer.Enqueue(nBuf);
 
-                    if (cBuf.Length == 0) _localBuffer.Dequeue().ReIntegrate();
+                    if (cBuf.Length == 0)
+                        _localBuffer.Dequeue().ReIntegrate();
                 }
             }
 
             return dStream;
+        }
+
+        /// <summary>
+        ///     Coies the current stream onto the given one
+        /// </summary>
+        /// <param name="stream"></param>
+        public void MoveTo(FifoStream stream)
+        {
+            stream._lastBuffer = _lastBuffer;
+            _lastBuffer = null;
+            var count = _localBuffer.Count;
+
+            for (var i = 0; i < count; i++)
+            {
+                stream._localBuffer.Enqueue(_localBuffer.Dequeue());
+            }
+
+            stream._length += _length;
+            _length = 0;
+            _localBuffer.Clear();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -101,7 +122,8 @@ namespace UtiLib.IO
 
             do
             {
-                if (_localBuffer.Count == 0) break;
+                if (_localBuffer.Count == 0)
+                    break;
 
                 cBuf = _localBuffer.Peek();
 
@@ -166,29 +188,6 @@ namespace UtiLib.IO
         public void Write(byte[] buffer)
         {
             Write(buffer, 0, buffer.Length);
-        }
-
-        /// <summary>
-        ///     Coies the current stream onto the given one
-        /// </summary>
-        /// <param name="stream"></param>
-        public void MoveTo(FifoStream stream)
-        {
-            stream._lastBuffer = _lastBuffer;
-            _lastBuffer = null;
-            var count = _localBuffer.Count;
-
-            for (var i = 0; i < count; i++)
-                stream._localBuffer.Enqueue(_localBuffer.Dequeue());
-
-            stream._length += _length;
-            _length = 0;
-            _localBuffer.Clear();
-        }
-
-        ~FifoStream()
-        {
-            Dispose();
         }
 
         #region NotImplemented

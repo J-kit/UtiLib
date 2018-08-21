@@ -39,8 +39,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web" />
+    <Reference Include="System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -83,7 +84,7 @@
     <Compile Include="IO\Translation\Translator.cs" />
     <Compile Include="IO\Translation\TranslatorResult.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Net\CookieWebClient.cs">
+    <Compile Include="Net\Web\CookieWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Net\Discovery\Ping\ApiPing.cs" />
@@ -99,9 +100,10 @@
     <Compile Include="Net\Headers\TcpFlags.cs" />
     <Compile Include="Net\Headers\TcpHeader.cs" />
     <Compile Include="Net\Headers\UdpHeader.cs" />
-    <Compile Include="Net\SharedMultiCookieClient.cs" />
+    <Compile Include="Net\Web\SharedMultiCookieClient.cs" />
     <Compile Include="Net\Sniffing\RawSniffer.cs" />
     <Compile Include="Net\Sniffing\SniffingPacket.cs" />
+    <Compile Include="Net\Web\WebUtils.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Shared\Enums\EnvironmentDefinition.cs" />
     <Compile Include="Extensions\AsyncEnumerableExtensions.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="Shared\Interfaces\IAsyncEnumerable.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="Delegates\README.md" />
   </ItemGroup>
   <ItemGroup />

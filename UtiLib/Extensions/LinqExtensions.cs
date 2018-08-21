@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,7 +30,8 @@ namespace System.Linq
         public static int ForEach<T>(this IEnumerable<T> input, Action<T> action)
         {
             int iterations = 0;
-            if (input == null) return iterations;
+            if (input == null)
+                return iterations;
             foreach (var put in input)
             {
                 if (!put.Equals(default(T)))
@@ -44,7 +46,8 @@ namespace System.Linq
         public static int ForEach<T>(this IEnumerable input, Action<T> action)
         {
             int iterations = 0;
-            if (input == null) return iterations;
+            if (input == null)
+                return iterations;
             foreach (var put in input)
             {
                 if (!put.Equals(default(T)))
@@ -65,7 +68,8 @@ namespace System.Linq
         /// <param name="onException"></param>
         public static void ForEachSwallow<T>(this IEnumerable<T> input, Action<T> action, Action<Exception> onException = null)
         {
-            if (input == null) return;
+            if (input == null)
+                return;
             foreach (var put in input)
             {
                 try
@@ -101,6 +105,20 @@ namespace System.Linq
         public static bool IsOneMatch<T>(this IEnumerable<T> input, IEnumerable<T> matchlist)
         {
             return input.Any(matchlist.Contains);
+        }
+    }
+
+    public static class QueueExtensions
+    {
+        public static List<T> DequeueRange<T>(this ConcurrentQueue<T> queue)
+        {
+            var result = new List<T>();
+            while (queue.TryDequeue(out var element))
+            {
+                result.Add(element);
+            }
+
+            return result;
         }
     }
 }

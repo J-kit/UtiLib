@@ -40,16 +40,22 @@ namespace UtiLib.Net.Discovery.Ping
         /// </summary>
         public override void Start()
         {
+            FlushResults();
             base.Start();
+
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
             _socket.Bind(new IPEndPoint(IPAddress.Any, 0));
 
             StartListen(20);
             lock (LockObject)
             {
-                while (AddressCollectionQueue.TryDequeue(out var currentAddressSet))
+                while (AddressCollectionQueue.TryDequeue(out var currentAddressSet) && currentAddressSet != null)
+                {
                     foreach (var ipEndPoint in currentAddressSet.Select(m => new IPEndPoint(m, 0)))
+                    {
                         SendPing(ipEndPoint);
+                    }
+                }
 
                 UpdateLastResult();
             }
@@ -139,10 +145,16 @@ namespace UtiLib.Net.Discovery.Ping
             }
         }
 
+        public void FlushResults()
+        {
+            _receivedIps.Clear();
+        }
+
         public override void Dispose()
         {
             lock (LockObject)
             {
+                FlushResults();
                 if (!Disposed)
                 {
                     _socket?.Dispose();

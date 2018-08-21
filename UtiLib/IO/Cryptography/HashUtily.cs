@@ -12,12 +12,6 @@ namespace UtiLib.IO.Cryptography
     {
         private static readonly ConcurrentDictionary<Type, MethodInfo> MethodCache = new ConcurrentDictionary<Type, MethodInfo>();
 
-        public static byte[] Calculate<T>(object input, HashFlag flag = 0) where T : HashAlgorithm
-        {
-            using (var fs = DecodeStream(input, flag))
-                return GetHashAlgo<T>()?.ComputeHash(fs);
-        }
-
         private static HashAlgorithm GetHashAlgo<T>() where T : HashAlgorithm
         {
             var typeVal = typeof(T);
@@ -32,6 +26,12 @@ namespace UtiLib.IO.Cryptography
                 return cMeth.Invoke(null, null) as HashAlgorithm;
 
             return default(T);
+        }
+
+        public static byte[] Calculate<T>(object input, HashFlag flag = 0) where T : HashAlgorithm
+        {
+            using (var fs = DecodeStream(input, flag))
+                return GetHashAlgo<T>()?.ComputeHash(fs);
         }
 
         private static Stream DecodeStream(object input, HashFlag flag)

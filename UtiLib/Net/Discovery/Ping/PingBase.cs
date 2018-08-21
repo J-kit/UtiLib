@@ -31,11 +31,15 @@ namespace UtiLib.Net.Discovery.Ping
             get => _measureTime;
             set
             {
-                if (Running)
+                if (Running && _measureTime != value)
+                {
                     throw new InProgressException(
                         $"The property {nameof(MeasureTime)} cannot be changed as the ping is in progress");
-
-                _measureTime = value;
+                }
+                else
+                {
+                    _measureTime = value;
+                }
             }
         }
 
@@ -97,8 +101,8 @@ namespace UtiLib.Net.Discovery.Ping
             var ipHs = new HashSet<IPAddress>();
 
             var tcs = new TaskCompletionSource<IReadOnlyCollection<IPAddress>>();
-            OnPingFinished += (_, __) => tcs.SetResult(ipHs);
-            OnResult += (_, args) =>
+            OnPingFinished = (_, __) => tcs.SetResult(ipHs);
+            OnResult = (_, args) =>
             {
                 lock (lockObj)
                 {
@@ -107,7 +111,9 @@ namespace UtiLib.Net.Discovery.Ping
             };
             Start();
 
-            return await tcs.Task;
+            var res = await tcs.Task;
+            Running = false;
+            return res;
         }
     }
 }
